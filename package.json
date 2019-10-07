@@ -8,17 +8,13 @@
   },
   "scripts": {
     "babel-node": "npx babel-node --presets=/*a*/ --ignore='foo|bar|baz'",
-    "start": "nodemon --exec npx babel-node src/index.js",
+    "startdev": "nodemon --exec npx babel-node src/index.js",
+    "start": "node build/index.js",
     "start-hack": "DATABASE_URL=postgres://bryant@localhost:5432/graphql_postgres nodemon --exec npx babel-node src/index.js",
     "test:run-server": "TEST_DATABASE=mytestdatabase yarn start",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
-    "test": "echo \"No test specified\" && exit 0"
-  },
-  "scripts2": {
-    "build": "babel src -d dist",
-    "start": "nodemon --watch src --exec yarn run serve",
-    "serve": "yarn run build && node dist/index.js",
-    "test": "yarn run build && mocha --require @babel/register"
+    "test": "echo \"No test specified\" && exit 0",
+    "build": "babel src -d build"
   },
   "keywords": [],
   "author": "",
