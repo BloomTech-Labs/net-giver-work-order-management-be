@@ -14,7 +14,8 @@
     "test:run-server": "TEST_DATABASE=mytestdatabase yarn start",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "test": "echo \"No test specified\" && exit 0",
-    "build": "babel src -d build"
+    "build": "babel src -d build",
+    "build-start": "babel src -d build && node build/index.js"
   },
   "keywords": [],
   "author": "",
