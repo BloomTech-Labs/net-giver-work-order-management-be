@@ -31,8 +31,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express.default)();
-app.use((0, _cors.default)());
-app.use((0, _morgan.default)("dev"));
+app.use((0, _cors.default)()); // app.use(morgan("dev"));
+
+if (app.get("env") == "production") {
+  app.use((0, _morgan.default)("common", {
+    skip: function (req, res) {
+      return res.statusCode < 400;
+    },
+    stream: __dirname + "/../morgan.log"
+  }));
+} else {
+  app.use((0, _morgan.default)("dev"));
+}
 
 const getMe = async req => {
   const token = req.headers["x-token"];
@@ -95,15 +105,19 @@ const httpServer = _http.default.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 const isTest = !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; ///initial seeding
+// sequelize.sync({ force: isTest || isProduction }).then(async () => {
+//   if (isTest || isProduction) {
+//     createUsersWithMessages(new Date());
+//   }
+//   httpServer.listen({ port }, () => {
+//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//   });
+// });
 
 _models.sequelize.sync({
-  force: isTest || isProduction
+  force: false
 }).then(async () => {
-  if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
-  }
-
   httpServer.listen({
     port
   }, () => {
@@ -113,26 +127,23 @@ _models.sequelize.sync({
 
 const createUsersWithMessages = async date => {
   await _models.default.User.create({
-    username: "rwieruch",
-    email: "hello@robin.com",
-    password: "rwieruch",
+    username: "user1",
+    email: "user1@test.com",
+    password: "testuser",
     role: "ADMIN",
     messages: [{
-      text: "Published the Road to learn React",
+      text: "hello word",
       createdAt: date.setSeconds(date.getSeconds() + 1)
     }]
   }, {
     include: [_models.default.Message]
   });
   await _models.default.User.create({
-    username: "ddavids",
-    email: "hello@david.com",
-    password: "ddavids",
+    username: "test",
+    email: "test@test.com",
+    password: "test123",
     messages: [{
-      text: "Happy to release ...",
-      createdAt: date.setSeconds(date.getSeconds() + 1)
-    }, {
-      text: "Published a complete ...",
+      text: "cat in the hat",
       createdAt: date.setSeconds(date.getSeconds() + 1)
     }]
   }, {

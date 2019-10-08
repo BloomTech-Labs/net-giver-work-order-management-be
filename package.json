@@ -8,8 +8,8 @@
   },
   "scripts": {
     "babel-node": "npx babel-node --presets=/*a*/ --ignore='foo|bar|baz'",
-    "start": "nodemon --exec npx babel-node src/index.js",
-    "startprod": "node build/index.js",
+    "startdev": "nodemon --exec npx babel-node src/index.js",
+    "start": "node build/index.js",
     "start-hack": "DATABASE_URL=postgres://bryant@localhost:5432/graphql_postgres nodemon --exec npx babel-node src/index.js",
     "test:run-server": "TEST_DATABASE=mytestdatabase yarn start",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
