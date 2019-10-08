@@ -107,13 +107,13 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
 const createUsersWithMessages = async date => {
   await models.User.create(
     {
-      username: "rwieruch",
-      email: "hello@robin.com",
-      password: "rwieruch",
+      username: "user1",
+      email: "user1@test.com",
+      password: "testuser",
       role: "ADMIN",
       messages: [
         {
-          text: "Published the Road to learn React",
+          text: "hello word",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -125,16 +125,12 @@ const createUsersWithMessages = async date => {
 
   await models.User.create(
     {
-      username: "ddavids",
-      email: "hello@david.com",
-      password: "ddavids",
+      username: "test",
+      email: "test@test.com",
+      password: "test123",
       messages: [
         {
-          text: "Happy to release ...",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        },
-        {
-          text: "Published a complete ...",
+          text: "cat in the hat",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
