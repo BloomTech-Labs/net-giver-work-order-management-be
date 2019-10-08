@@ -94,11 +94,19 @@ const isTest = !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
-  if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
-  }
+///initial seeding
+// sequelize.sync({ force: isTest || isProduction }).then(async () => {
 
+//   if (isTest || isProduction) {
+//     createUsersWithMessages(new Date());
+//   }
+
+//   httpServer.listen({ port }, () => {
+//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//   });
+// });
+
+sequelize.sync({ force: false }).then(async () => {
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
