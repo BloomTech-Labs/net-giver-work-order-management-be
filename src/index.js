@@ -49,15 +49,15 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    // remove the internal sequelize error message
+    // remove the internal sequelize error workorder
     // leave only the important validation error
-    const message = error.message
+    const workorder = error.workorder
       .replace("SequelizeValidationError: ", "")
       .replace("Validation error: ", "");
 
     return {
       ...error,
-      message
+      workorder
     };
   },
   context: async ({ req, connection }) => {
@@ -95,39 +95,38 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
 ///initial seeding
-// sequelize.sync({ force: isTest || isProduction }).then(async () => {
+sequelize.sync({ force: isTest || isProduction }).then(async () => {
+  if (isTest || isProduction) {
+    createUsersWithWorkorders(new Date());
+  }
 
-//   if (isTest || isProduction) {
-//     createUsersWithMessages(new Date());
-//   }
-
-//   httpServer.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
-//   });
-// });
-
-sequelize.sync({ force: false }).then(async () => {
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
 
-const createUsersWithMessages = async date => {
+// sequelize.sync({ force: false }).then(async () => {
+//   httpServer.listen({ port }, () => {
+//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//   });
+// });
+
+const createUsersWithWorkorders = async date => {
   await models.User.create(
     {
       username: "user1",
       email: "user1@test.com",
       password: "testuser",
       role: "ADMIN",
-      messages: [
+      workorders: [
         {
-          text: "hello word",
+          order: "hello word",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
     },
     {
-      include: [models.Message]
+      include: [models.Workorder]
     }
   );
 
@@ -136,15 +135,15 @@ const createUsersWithMessages = async date => {
       username: "test",
       email: "test@test.com",
       password: "test123",
-      messages: [
+      workorders: [
         {
-          text: "cat in the hat",
+          order: "cat in the hat",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
     },
     {
-      include: [models.Message]
+      include: [models.Workorder]
     }
   );
 };
