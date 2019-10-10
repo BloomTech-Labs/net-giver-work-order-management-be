@@ -1,14 +1,14 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 const user = (sequelize, DataTypes) => {
-  const User = sequelize.define('user', {
+  const User = sequelize.define("user", {
     username: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
       validate: {
-        notEmpty: true,
-      },
+        notEmpty: true
+      }
     },
     email: {
       type: DataTypes.STRING,
@@ -16,34 +16,34 @@ const user = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        isEmail: true,
-      },
+        isEmail: true
+      }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [7, 42],
-      },
+        len: [7, 42]
+      }
     },
     role: {
-      type: DataTypes.STRING,
-    },
+      type: DataTypes.STRING
+    }
   });
 
   User.associate = models => {
-    User.hasMany(models.Message, { onDelete: 'CASCADE' });
+    User.hasMany(models.Workorder, { onDelete: "CASCADE" });
   };
 
   User.findByLogin = async login => {
     let user = await User.findOne({
-      where: { username: login },
+      where: { username: login }
     });
 
     if (!user) {
       user = await User.findOne({
-        where: { email: login },
+        where: { email: login }
       });
     }
 

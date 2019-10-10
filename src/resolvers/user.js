@@ -78,8 +78,8 @@ export default {
   },
 
   User: {
-    messages: async (user, args, { models }) => {
-      return await models.Message.findAll({
+    workorders: async (user, args, { models }) => {
+      return await models.Workorder.findAll({
         where: {
           userId: user.id
         }
