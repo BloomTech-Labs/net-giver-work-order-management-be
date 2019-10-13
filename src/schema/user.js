@@ -17,7 +17,7 @@ export default gql`
       picture: String
       authyId: String
     ): UserInfo!
-    signIn(login: String!, password: String!): SignIn!
+    signIn(login: String!, password: String): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
     verifyAuthy: UserInfo!
