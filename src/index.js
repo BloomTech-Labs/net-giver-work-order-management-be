@@ -24,7 +24,7 @@ app.use(cors());
 //       skip: function(req, res) {
 //         return res.statusCode < 400;
 //       },
-//       stream: __dirname + "/../morgan.log"
+//       stream: __dirname + "morgan.log"
 //     })
 //   );
 // } else {
@@ -95,21 +95,21 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
 ///initial seeding
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
-  if (isTest || isProduction) {
-    createUsersWithWorkorders(new Date());
-  }
+// sequelize.sync({ force: isTest || isProduction }).then(async () => {
+//   if (isTest || isProduction) {
+//     createUsersWithWorkorders(new Date());
+//   }
 
-  httpServer.listen({ port }, () => {
-    console.log(`Apollo Server on http://localhost:${port}/graphql`);
-  });
-});
-
-// sequelize.sync({ force: false }).then(async () => {
 //   httpServer.listen({ port }, () => {
 //     console.log(`Apollo Server on http://localhost:${port}/graphql`);
 //   });
 // });
+
+sequelize.sync({ force: false }).then(async () => {
+  httpServer.listen({ port }, () => {
+    console.log(`Apollo Server on http://localhost:${port}/graphql`);
+  });
+});
 
 const createUsersWithWorkorders = async date => {
   await models.User.create(
