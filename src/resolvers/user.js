@@ -4,11 +4,46 @@ import { AuthenticationError, UserInputError } from "apollo-server";
 
 import { isAdmin, isAuthenticated } from "./authorization";
 
+import { Client } from "authy-client";
+import authy from "authy";
+
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, username, role } = user;
   return await jwt.sign({ id, email, username, role }, secret, {
     expiresIn
   });
+};
+
+let client;
+if (process.env.ACCOUNT_SECURITY_API_KEY) {
+  client = new Client({ key: process.env.ACCOUNT_SECURITY_API_KEY });
+} else {
+  client = new Client({ key: "foo" });
+}
+
+const registerAuthy = async ({ email, phone }) => {
+  //const { user: { id: authyId } } = await client.registerUser({
+  const register = await client.registerUser({
+    countryCode: "US",
+    email: email,
+    phone: phone
+  });
+  const { user: { id: authyId } } = register;
+  //const authyreq = await client.requestSms({ authyId });
+  //const { cellphone } = authyreq;
+  return authyId;
+};
+
+const sms = async authyId => {
+  const smsRequest = await client.requestSms({ authyId });
+  const { cellphone } = smsRequest;
+  return cellphone;
+};
+
+const verifyToken = async authyId => {
+  const smsRequest = await client.requestSms({ authyId });
+  const { cellphone } = smsRequest;
+  return cellphone;
 };
 
 export default {
@@ -31,32 +66,43 @@ export default {
   Mutation: {
     signUp: async (
       parent,
-      { username, email, password },
+      { username, email, password, phone, picture },
       { models, secret }
     ) => {
+      const authyId = await registerAuthy({ email, phone });
       const user = await models.User.create({
         username,
         email,
-        password
+        password,
+        phone,
+        picture,
+        authyId
       });
+      const token = createToken(user, secret, "30m");
 
-      return { token: createToken(user, secret, "30m") };
+      return { token: token, user: user, authyId: authyId };
+
+      // return { token: createToken(user, secret, "30m"), user: user };
     },
 
     signIn: async (parent, { login, password }, { models, secret }) => {
       const user = await models.User.findByLogin(login);
-
       if (!user) {
         throw new UserInputError("No user found with this login credentials.");
       }
-
       const isValid = await user.validatePassword(password);
 
       if (!isValid) {
         throw new AuthenticationError("Invalid password.");
       }
+      const token = createToken(user, secret, "30m");
+      const { authyId } = user;
+      const smsRequest = await client.requestSms({ authyId });
+      const { cellphone } = smsRequest;
 
-      return { token: createToken(user, secret, "30m") };
+      return { token: token, user: user, authyId: authyId, phone: cellphone };
+
+      // return { token: createToken(user, secret, "30m") };
     },
 
     updateUser: combineResolvers(
@@ -73,6 +119,16 @@ export default {
         return await models.User.destroy({
           where: { id }
         });
+      }
+    ),
+    verifyAuthy: combineResolvers(
+      isAuthenticated,
+      async (parent, { token }, { models, me }) => {
+        const user = await models.User.findByPk(me.id);
+        const { authyId } = user;
+        const authyreq = client.verifyToken({ authyId: authyId, token: token });
+        const { cellphone } = authyreq;
+        return cellphone;
       }
     )
   },

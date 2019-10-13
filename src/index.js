@@ -51,9 +51,9 @@ const server = new ApolloServer({
   formatError: error => {
     // remove the internal sequelize error workorder
     // leave only the important validation error
-    const workorder = error.workorder
-      .replace("SequelizeValidationError: ", "")
-      .replace("Validation error: ", "");
+    const workorder = error.workorder;
+    // .replace("SequelizeValidationError: ", "")
+    // .replace("Validation error: ", "");
 
     return {
       ...error,
@@ -114,13 +114,15 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
 const createUsersWithWorkorders = async date => {
   await models.User.create(
     {
-      username: "user1",
-      email: "user1@test.com",
-      password: "testuser",
+      username: "bryant",
+      email: "bryantpatton@gmail.com",
+      password: "bryant",
       role: "ADMIN",
+      phone: "4153163549",
+      authyId: "82620055",
       workorders: [
         {
-          order: "hello word",
+          order: "paint the dining area",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -132,12 +134,13 @@ const createUsersWithWorkorders = async date => {
 
   await models.User.create(
     {
-      username: "test",
-      email: "test@test.com",
-      password: "test123",
+      username: "user2",
+      email: "user2@test.com",
+      password: "user2",
+      phone: "14153163549",
       workorders: [
         {
-          order: "cat in the hat",
+          order: "fix broken sink in unit 101",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]

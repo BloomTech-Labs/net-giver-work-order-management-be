@@ -8,10 +8,32 @@ export default gql`
   }
 
   extend type Mutation {
-    signUp(username: String!, email: String!, password: String!): Token!
-    signIn(login: String!, password: String!): Token!
+    signUp(
+      username: String!
+      email: String!
+      password: String!
+      role: String
+      phone: String!
+      picture: String
+      authyId: String
+    ): UserInfo!
+    signIn(login: String!, password: String!): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
+    verifyAuthy: UserInfo!
+  }
+
+  type UserInfo {
+    token: String!
+    user: User
+    authyId: String!
+  }
+
+  type SignIn {
+    token: String!
+    user: User
+    authyId: String!
+    phone: String!
   }
 
   type Token {
@@ -23,6 +45,9 @@ export default gql`
     username: String!
     email: String!
     role: String
+    phone: String!
+    picture: String
+    authyId: String
     workorders: [Workorder!]
   }
 `;

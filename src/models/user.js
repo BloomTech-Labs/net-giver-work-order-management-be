@@ -24,11 +24,26 @@ const user = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [7, 42]
+        len: [5, 42]
       }
     },
     role: {
       type: DataTypes.STRING
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [10]
+      }
+    },
+    picture: {
+      type: DataTypes.STRING
+    },
+    authyId: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 
