@@ -33,6 +33,8 @@
     "apollo-server": "^2.2.3",
     "apollo-server-express": "^2.2.3",
     "apollo-server-lambda": "^2.9.5",
+    "authy": "^1.4.0",
+    "authy-client": "^1.1.4",
     "bcrypt": "^3.0.2",
     "cors": "^2.8.5",
     "dataloader": "^1.4.0",
