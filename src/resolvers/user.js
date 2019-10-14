@@ -2,7 +2,11 @@ import jwt from "jsonwebtoken";
 import { combineResolvers } from "graphql-resolvers";
 import { AuthenticationError, UserInputError } from "apollo-server";
 
-import { isAdmin, isAuthenticated } from "./authorization";
+import {
+  isAdmin,
+  isAuthenticated,
+  isAuthyAuthenticated
+} from "./authorization";
 
 import { Client } from "authy-client";
 import authy from "authy";
@@ -85,8 +89,8 @@ export default {
       // return { token: createToken(user, secret, "30m"), user: user };
     },
 
-    signIn: async (parent, { login, password }, { models, secret }) => {
-      const user = await models.User.findByLogin(login);
+    signIn: async (parent, { username, password }, { models, secret }) => {
+      const user = await models.User.findByLogin(username);
       if (!user) {
         throw new UserInputError("No user found with this login credentials.");
       }
@@ -106,6 +110,28 @@ export default {
       return { token: token, user: user, authyId: authyId, phone: cellphone };
 
       // return { token: createToken(user, secret, "30m") };
+    },
+
+    signInDev: async (parent, { username }, { models, secret }) => {
+      const user = await models.User.findByLogin(username);
+      if (!user) {
+        throw new UserInputError("No user found with this login credentials.");
+      }
+
+      const { authyId } = user;
+      if (!authyId) {
+        throw new UserInputError("User has not registered with Authy.");
+      }
+      return { username: user.username };
+    },
+
+    authyVerifyDev: async (parent, { username, code }, { models, secret }) => {
+      const user = await models.User.findByLogin(username);
+      if (!code === "123456") {
+        throw new UserInputError("Wrong Auth Code. Try 123456");
+      }
+      const token = createToken(user, secret, "30m");
+      return { token: token };
     },
 
     updateUser: combineResolvers(
