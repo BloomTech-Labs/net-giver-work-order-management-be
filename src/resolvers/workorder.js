@@ -39,17 +39,16 @@ export default {
         }
       };
     },
-    workorder: async (parent, { id }, { models }) => {
-      return await models.Workorder.findByPk(id);
+    workorder: async (parent, { qrcode }, { models }) => {
+      return await models.Workorder.findOne({ where: { qrcode } });
     }
   },
 
   Mutation: {
     createWorkorder: combineResolvers(
       isAuthenticated,
-      async (parent, { order, qrcode }, { models, me }) => {
+      async (parent, { qrcode }, { models, me }) => {
         const workorder = await models.Workorder.create({
-          order,
           qrcode,
           userId: me.id
         });
@@ -59,6 +58,24 @@ export default {
         });
 
         return workorder;
+      }
+    ),
+
+    editWorkorder: combineResolvers(
+      isAuthenticated,
+      async (
+        parent,
+        { qrcode, detail, priority, status, title },
+        { models, me }
+      ) => {
+        const workorder = await models.Workorder.findOne({ where: { qrcode } });
+        return await workorder.update({
+          qrcode,
+          detail,
+          priority,
+          status,
+          title
+        });
       }
     ),
 

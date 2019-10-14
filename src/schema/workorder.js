@@ -3,11 +3,18 @@ import { gql } from "apollo-server-express";
 export default gql`
   extend type Query {
     workorders(cursor: String, limit: Int): WorkorderConnection!
-    workorder(id: ID!): Workorder!
+    workorder(qrcode: String!): Workorder!
   }
 
   extend type Mutation {
-    createWorkorder(order: String!, qrcode: String!): Workorder!
+    createWorkorder(qrcode: String!): Workorder!
+    editWorkorder(
+      qrcode: String!
+      detail: String
+      priority: String
+      status: String
+      title: String
+    ): Workorder!
     deleteWorkorder(id: ID!): Boolean!
   }
 
@@ -22,11 +29,14 @@ export default gql`
   }
 
   type Workorder {
-    id: ID!
-    order: String!
+    id: ID
+    detail: String
     createdAt: Date!
     user: User!
     qrcode: String!
+    priority: String
+    status: String
+    title: String
   }
 
   extend type Subscription {

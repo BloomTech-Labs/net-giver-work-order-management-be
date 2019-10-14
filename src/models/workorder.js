@@ -1,16 +1,25 @@
 const workorder = (sequelize, DataTypes) => {
   const Workorder = sequelize.define("workorder", {
-    order: {
-      type: DataTypes.STRING,
-      validate: { notEmpty: true }
+    title: {
+      type: DataTypes.STRING
     },
     qrcode: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: true,
         len: [5]
       }
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    priority: {
+      type: DataTypes.STRING
+    },
+    detail: {
+      type: DataTypes.STRING
     }
   });
 
