@@ -95,21 +95,21 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
 ///initial seeding
-// sequelize.sync({ force: isTest || isProduction }).then(async () => {
-//   if (isTest || isProduction) {
-//     createUsersWithWorkorders(new Date());
-//   }
+sequelize.sync({ force: isTest || isProduction }).then(async () => {
+  if (isTest || isProduction) {
+    createUsersWithWorkorders(new Date());
+  }
 
-//   httpServer.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
-//   });
-// });
-
-sequelize.sync({ force: false }).then(async () => {
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
+
+// sequelize.sync({ force: false }).then(async () => {
+//   httpServer.listen({ port }, () => {
+//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//   });
+// });
 
 const createUsersWithWorkorders = async date => {
   await models.User.create(
@@ -123,7 +123,8 @@ const createUsersWithWorkorders = async date => {
       workorders: [
         {
           order: "paint the dining area",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
+          createdAt: date.setSeconds(date.getSeconds() + 1),
+          qrcode: "000002"
         }
       ]
     },
@@ -134,14 +135,16 @@ const createUsersWithWorkorders = async date => {
 
   await models.User.create(
     {
-      username: "user2",
-      email: "user2@test.com",
-      password: "user2",
-      phone: "14153163549",
+      username: "skylerd",
+      email: "skyler2440@gmail.com",
+      password: "password",
+      phone: "3523904132",
+      authyId: "190296236",
       workorders: [
         {
           order: "fix broken sink in unit 101",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
+          createdAt: date.setSeconds(date.getSeconds() + 1),
+          qrcode: "000001"
         }
       ]
     },

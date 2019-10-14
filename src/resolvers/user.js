@@ -127,6 +127,9 @@ export default {
 
     authyVerifyDev: async (parent, { username, code }, { models, secret }) => {
       const user = await models.User.findByLogin(username);
+      if (!user) {
+        throw new UserInputError("No user found with this login credentials.");
+      }
       if (code !== "123456") {
         throw new UserInputError("Wrong Auth Code. Try 123456");
       }

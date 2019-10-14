@@ -47,13 +47,14 @@ export default {
   Mutation: {
     createWorkorder: combineResolvers(
       isAuthenticated,
-      async (parent, { order }, { models, me }) => {
+      async (parent, { order, qrcode }, { models, me }) => {
         const workorder = await models.Workorder.create({
           order,
+          qrcode,
           userId: me.id
         });
 
-        pubsub.publish(EVENTS.MESSAGE.CREATED, {
+        pubsub.publish(EVENTS.WORKORDER.CREATED, {
           workorderCreated: { workorder }
         });
 
@@ -78,7 +79,7 @@ export default {
 
   Subscription: {
     workorderCreated: {
-      subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED)
+      subscribe: () => pubsub.asyncIterator(EVENTS.WORKORDER.CREATED)
     }
   }
 };

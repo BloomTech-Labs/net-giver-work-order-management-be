@@ -7,7 +7,7 @@ export default gql`
   }
 
   extend type Mutation {
-    createWorkorder(order: String!): Workorder!
+    createWorkorder(order: String!, qrcode: String!): Workorder!
     deleteWorkorder(id: ID!): Boolean!
   }
 
@@ -26,6 +26,7 @@ export default gql`
     order: String!
     createdAt: Date!
     user: User!
+    qrcode: String!
   }
 
   extend type Subscription {
