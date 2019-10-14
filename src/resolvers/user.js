@@ -127,7 +127,7 @@ export default {
 
     authyVerifyDev: async (parent, { username, code }, { models, secret }) => {
       const user = await models.User.findByLogin(username);
-      if (!code === "123456") {
+      if (code !== "123456") {
         throw new UserInputError("Wrong Auth Code. Try 123456");
       }
       const token = createToken(user, secret, "30m");
