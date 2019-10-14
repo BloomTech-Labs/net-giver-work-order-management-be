@@ -17,16 +17,22 @@ export default gql`
       picture: String
       authyId: String
     ): UserInfo!
-    signIn(login: String!, password: String): SignIn!
+    signIn(username: String!, password: String): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
     verifyAuthy: UserInfo!
+    signInDev(username: String!): Login!
+    authyVerifyDev(username: String!, code: String!): Token!
   }
 
   type UserInfo {
     token: String!
     user: User
     authyId: String!
+  }
+
+  type Login {
+    username: String!
   }
 
   type SignIn {
