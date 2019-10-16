@@ -44,6 +44,14 @@ const user = (sequelize, DataTypes) => {
     authyId: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    displayName: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    isProfileComplete: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
 

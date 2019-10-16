@@ -9,7 +9,7 @@ var _apolloServerExpress = require("apollo-server-express");
 
 var _user = _interopRequireDefault(require("./user"));
 
-var _message = _interopRequireDefault(require("./message"));
+var _workorder = _interopRequireDefault(require("./workorder"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28,5 +28,5 @@ const linkSchema = _apolloServerExpress.gql`
     _: Boolean
   }
 `;
-var _default = [linkSchema, _user.default, _message.default];
+var _default = [linkSchema, _user.default, _workorder.default];
 exports.default = _default;

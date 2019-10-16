@@ -15,6 +15,7 @@ export default gql`
       role: String
       phone: String!
       picture: String
+      displayName: String
       authyId: String
     ): UserInfo!
     signIn(username: String!, password: String): SignIn!
@@ -54,6 +55,7 @@ export default gql`
     phone: String!
     picture: String
     authyId: String
+    displayName: String
     workorders: [Workorder!]
   }
 `;

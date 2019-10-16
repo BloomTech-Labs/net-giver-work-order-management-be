@@ -28,7 +28,7 @@ if (process.env.DATABASE_URL) {
 
 const models = {
   User: sequelize.import("./user"),
-  Message: sequelize.import("./message")
+  Workorder: sequelize.import("./workorder")
 };
 Object.keys(models).forEach(key => {
   if ("associate" in models[key]) {

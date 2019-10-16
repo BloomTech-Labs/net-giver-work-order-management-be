@@ -91,12 +91,14 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const isTest = !!process.env.TEST_DATABASE;
-const isProduction = !!process.env.DATABASE_URL;
+const isDev = !!process.env.DATABASE;
+const isStaging = !!process.env.DATABASE_URL;
+const isProduction = !!process.env.DATABASE_URL_PROD;
 const port = process.env.PORT || 3000;
 
 ///initial seeding
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
-  if (isTest || isProduction) {
+sequelize.sync({ force: isTest || isStaging }).then(async () => {
+  if (isTest || isStaging) {
     createUsersWithWorkorders(new Date());
   }
 
@@ -122,7 +124,7 @@ const createUsersWithWorkorders = async date => {
       authyId: "82620055",
       workorders: [
         {
-          order: "paint the dining area",
+          title: "paint the dining area",
           createdAt: date.setSeconds(date.getSeconds() + 1),
           qrcode: "000002"
         }
@@ -138,11 +140,12 @@ const createUsersWithWorkorders = async date => {
       username: "skylerd",
       email: "skyler2440@gmail.com",
       password: "password",
+      role: "ADMIN",
       phone: "3523904132",
       authyId: "190296236",
       workorders: [
         {
-          order: "fix broken sink in unit 101",
+          title: "fix broken sink in unit 101",
           createdAt: date.setSeconds(date.getSeconds() + 1),
           qrcode: "000001"
         }
