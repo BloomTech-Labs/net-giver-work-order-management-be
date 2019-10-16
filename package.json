@@ -12,7 +12,7 @@
     "start": "node build/index.js",
     "test:run-server": "TEST_DATABASE=postgres://bryant@localhost:5432/test_graphql_db yarn startdev",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
-    "test": "mocha --require @babel/register 'src/**/*.spec.js'",
+    "test": "",
     "build": "babel src -d build"
   },
   "keywords": [],
