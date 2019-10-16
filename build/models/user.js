@@ -10,7 +10,7 @@ var _bcrypt = _interopRequireDefault(require("bcrypt"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const user = (sequelize, DataTypes) => {
-  const User = sequelize.define('user', {
+  const User = sequelize.define("user", {
     username: {
       type: DataTypes.STRING,
       unique: true,
@@ -33,17 +33,40 @@ const user = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [7, 42]
+        len: [5, 42]
       }
     },
     role: {
       type: DataTypes.STRING
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [10]
+      }
+    },
+    picture: {
+      type: DataTypes.STRING
+    },
+    authyId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    displayName: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    isProfileComplete: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
 
   User.associate = models => {
-    User.hasMany(models.Message, {
-      onDelete: 'CASCADE'
+    User.hasMany(models.Workorder, {
+      onDelete: "CASCADE"
     });
   };
 

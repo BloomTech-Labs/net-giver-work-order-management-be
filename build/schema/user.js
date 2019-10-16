@@ -19,11 +19,35 @@ var _default = _apolloServerExpress.gql`
       username: String!
       email: String!
       password: String!
-    ): Token!
-
-    signIn(login: String!, password: String!): Token!
+      role: String
+      phone: String!
+      picture: String
+      displayName: String
+      authyId: String
+    ): UserInfo!
+    signIn(username: String!, password: String): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
+    verifyAuthy: UserInfo!
+    signInDev(username: String!): Login!
+    authyVerifyDev(username: String!, code: String!): Token!
+  }
+
+  type UserInfo {
+    token: String!
+    user: User
+    authyId: String!
+  }
+
+  type Login {
+    username: String!
+  }
+
+  type SignIn {
+    token: String!
+    user: User
+    authyId: String!
+    phone: String!
   }
 
   type Token {
@@ -35,7 +59,11 @@ var _default = _apolloServerExpress.gql`
     username: String!
     email: String!
     role: String
-    messages: [Message!]
+    phone: String!
+    picture: String
+    authyId: String
+    displayName: String
+    workorders: [Workorder!]
   }
 `;
 
