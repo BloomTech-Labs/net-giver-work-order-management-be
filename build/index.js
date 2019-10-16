@@ -32,17 +32,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const app = (0, _express.default)();
 app.use((0, _cors.default)()); // app.use(morgan("dev"));
-
-if (app.get("env") == "production") {
-  app.use((0, _morgan.default)("common", {
-    skip: function (req, res) {
-      return res.statusCode < 400;
-    },
-    stream: __dirname + "/../morgan.log"
-  }));
-} else {
-  app.use((0, _morgan.default)("dev"));
-}
+// if (app.get("env") == "production") {
+//   app.use(
+//     morgan("common", {
+//       skip: function(req, res) {
+//         return res.statusCode < 400;
+//       },
+//       stream: __dirname + "morgan.log"
+//     })
+//   );
+// } else {
+//   app.use(morgan("dev"));
+// }
 
 const getMe = async req => {
   const token = req.headers["x-token"];
@@ -62,11 +63,13 @@ const server = new _apolloServerExpress.ApolloServer({
   typeDefs: _schema.default,
   resolvers: _resolvers.default,
   formatError: error => {
-    // remove the internal sequelize error message
+    // remove the internal sequelize error workorder
     // leave only the important validation error
-    const message = error.message.replace("SequelizeValidationError: ", "").replace("Validation error: ", "");
+    const workorder = error.workorder; // .replace("SequelizeValidationError: ", "")
+    // .replace("Validation error: ", "");
+
     return { ...error,
-      message
+      workorder
     };
   },
   context: async ({
@@ -106,47 +109,54 @@ server.installSubscriptionHandlers(httpServer);
 const isTest = !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000; ///initial seeding
-// sequelize.sync({ force: isTest || isProduction }).then(async () => {
-//   if (isTest || isProduction) {
-//     createUsersWithMessages(new Date());
-//   }
-//   httpServer.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
-//   });
-// });
 
 _models.sequelize.sync({
-  force: false
+  force: isTest || isProduction
 }).then(async () => {
+  if (isTest || isProduction) {
+    createUsersWithWorkorders(new Date());
+  }
+
   httpServer.listen({
     port
   }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
-});
+}); // sequelize.sync({ force: false }).then(async () => {
+//   httpServer.listen({ port }, () => {
+//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//   });
+// });
 
-const createUsersWithMessages = async date => {
+
+const createUsersWithWorkorders = async date => {
   await _models.default.User.create({
-    username: "user1",
-    email: "user1@test.com",
-    password: "testuser",
+    username: "bryant",
+    email: "bryantpatton@gmail.com",
+    password: "bryant",
     role: "ADMIN",
-    messages: [{
-      text: "hello word",
-      createdAt: date.setSeconds(date.getSeconds() + 1)
+    phone: "4153163549",
+    authyId: "82620055",
+    workorders: [{
+      order: "paint the dining area",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      qrcode: "000002"
     }]
   }, {
-    include: [_models.default.Message]
+    include: [_models.default.Workorder]
   });
   await _models.default.User.create({
-    username: "test",
-    email: "test@test.com",
-    password: "test123",
-    messages: [{
-      text: "cat in the hat",
-      createdAt: date.setSeconds(date.getSeconds() + 1)
+    username: "skylerd",
+    email: "skyler2440@gmail.com",
+    password: "password",
+    phone: "3523904132",
+    authyId: "190296236",
+    workorders: [{
+      order: "fix broken sink in unit 101",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      qrcode: "000001"
     }]
   }, {
-    include: [_models.default.Message]
+    include: [_models.default.Workorder]
   });
 };

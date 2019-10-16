@@ -44,8 +44,8 @@ const sms = async authyId => {
   return cellphone;
 };
 
-const verifyToken = async authyId => {
-  const smsRequest = await client.requestSms({ authyId });
+const verifyToken = async (authyId, cdde) => {
+  const smsRequest = await client.verifyToken({ authyId, code });
   const { cellphone } = smsRequest;
   return cellphone;
 };
@@ -70,7 +70,7 @@ export default {
   Mutation: {
     signUp: async (
       parent,
-      { username, email, password, phone, picture },
+      { username, email, password, phone, picture, displayName },
       { models, secret }
     ) => {
       const authyId = await registerAuthy({ email, phone });
@@ -80,13 +80,12 @@ export default {
         password,
         phone,
         picture,
+        displayName,
         authyId
       });
       const token = createToken(user, secret, "30m");
 
       return { token: token, user: user, authyId: authyId };
-
-      // return { token: createToken(user, secret, "30m"), user: user };
     },
 
     signIn: async (parent, { username, password }, { models, secret }) => {
