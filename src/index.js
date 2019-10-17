@@ -49,13 +49,13 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    const workorder = error.workorder;
+    const message = error.message;
     // .replace("SequelizeValidationError: ", "")
     // .replace("Validation error: ", "");
 
     return {
       ...error,
-      workorder
+      message
     };
   },
   context: async ({ req, connection }) => {
@@ -94,13 +94,15 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
 /// seeding
-sequelize.sync({ force: isTest }).then(async () => {
-  if (isTest) {
+sequelize.sync({ force: isTest || isDev }).then(async () => {
+  if (isTest || isDev) {
     createUsersWithWorkorders(new Date());
   }
 
   httpServer.listen({ port }, () => {
-    console.log(`Apollo Server on http://localhost:${port}/graphql`);
+    console.log(
+      `Apollo Server on http://localhost:${port}/graphql and isdev ${isDev}`
+    );
   });
 });
 

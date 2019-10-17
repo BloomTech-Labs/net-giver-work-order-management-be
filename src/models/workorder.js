@@ -13,10 +13,14 @@ const workorder = (sequelize, DataTypes) => {
       }
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      values: ["Complete", "In Progress", "Not Started"],
+      defaultValue: "Not Started"
     },
     priority: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      values: ["Low", "Medium", "High", "Emergency"],
+      defaultValue: "Low"
     },
     detail: {
       type: DataTypes.STRING
