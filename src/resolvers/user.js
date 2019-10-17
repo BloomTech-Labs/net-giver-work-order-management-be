@@ -101,7 +101,7 @@ export default {
         }
       }
 
-      const token = createToken(user, secret, "30m");
+      const token = createToken(user, secret, "14d");
       const { authyId } = user;
       const smsRequest = await client.requestSms({ authyId });
       const { cellphone } = smsRequest;

@@ -49,15 +49,13 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    // remove the internal sequelize error workorder
-    // leave only the important validation error
-    const workorder = error.workorder;
+    const message = error.message;
     // .replace("SequelizeValidationError: ", "")
     // .replace("Validation error: ", "");
 
     return {
       ...error,
-      workorder
+      message
     };
   },
   context: async ({ req, connection }) => {
@@ -92,18 +90,19 @@ server.installSubscriptionHandlers(httpServer);
 
 const isTest = !!process.env.TEST_DATABASE;
 const isDev = !!process.env.DATABASE;
-const isStaging = !!process.env.DATABASE_URL;
-const isProduction = !!process.env.DATABASE_URL_PROD;
+const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
-///initial seeding
-sequelize.sync({ force: isTest || isStaging }).then(async () => {
-  if (isTest || isStaging) {
+/// seeding
+sequelize.sync({ force: isTest || isDev }).then(async () => {
+  if (isTest || isDev) {
     createUsersWithWorkorders(new Date());
   }
 
   httpServer.listen({ port }, () => {
-    console.log(`Apollo Server on http://localhost:${port}/graphql`);
+    console.log(
+      `Apollo Server on http://localhost:${port}/graphql and isdev ${isDev}`
+    );
   });
 });
 

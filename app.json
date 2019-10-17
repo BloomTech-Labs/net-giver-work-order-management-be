@@ -1,0 +1,29 @@
+{
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/carloluis/heroku-buildpack-vim"
+    }
+  ],
+  "description": "",
+  "env": {
+    "SECRET": {
+      "required": true
+    },
+    "DATABASE_URL": "postgres://rdntcvkyjjdras:4ea4913480319624ab1a24352146896837995fee795c1be1c18044a9a0cccd5b@ec2-23-21-87-183.compute-1.amazonaws.com:5432/ddp0js5tj7misi"
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "net-giver-wom-be",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}

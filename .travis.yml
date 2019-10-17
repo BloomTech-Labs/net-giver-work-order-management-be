@@ -1,10 +1,42 @@
 language: node_js
 
 node_js:
-  - stable
+  - 12
 
 install:
-  - npm install
+  - yarn install
+env:
+  - TEST_DATABASE=postgres://rqkuqebjixwlls:9dd9c51a523d2875ed619cfafb79e45cf8f9cf5dedc2551d668bb47b952452bf@ec2-23-21-87-183.compute-1.amazonaws.com:5432/dfv8gv9g0nfp1p?ssl=true
 
 script:
-  - npm test
+  - yarn test
+
+
+#   version: 2
+
+# jobs:
+#   build:
+#     steps:
+#       - checkout
+
+#       - run: yarn install
+#       # CircleCI needs global installs to be sudo
+#       - run: sudo yarn install --global apollo
+
+#       # Start the GraphQL server.  If a different command is used to
+#       # start the server, use it in place of `npm start` here.
+#       - run:
+#           name: Starting server
+#           command: yarn start
+#           background: true
+
+#       # make sure the server has enough time to start up before running
+#       # commands against it
+#       - run: sleep 5
+
+#       # When running on the 'master' branch, push the latest version
+#       # of the schema to Apollo Graph Manager.
+#       - run: |
+#           if [ "${CIRCLE_BRANCH}" == "dev" ]; then
+#             apollo service:push --tag=dev
+#           fi
