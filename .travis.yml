@@ -3,13 +3,13 @@ language: node_js
 node_js:
   - 12
 
-install:
-  - yarn install
-env:
-  - TEST_DATABASE=postgres://rqkuqebjixwlls:9dd9c51a523d2875ed619cfafb79e45cf8f9cf5dedc2551d668bb47b952452bf@ec2-23-21-87-183.compute-1.amazonaws.com:5432/dfv8gv9g0nfp1p?ssl=true
+# install:
+#   - yarn install
+# env:
+#   - TEST_DATABASE=postgres://rqkuqebjixwlls:9dd9c51a523d2875ed619cfafb79e45cf8f9cf5dedc2551d668bb47b952452bf@ec2-23-21-87-183.compute-1.amazonaws.com:5432/dfv8gv9g0nfp1p?ssl=true
 
-script:
-  - yarn test
+# script:
+#   - yarn test
 
 
 #   version: 2

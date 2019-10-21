@@ -62,7 +62,7 @@ const user = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     }
-  });
+  }, {});
 
   User.associate = models => {
     User.hasMany(models.Workorder, {
@@ -104,5 +104,7 @@ const user = (sequelize, DataTypes) => {
   return User;
 };
 
-var _default = user;
+var _default = user; // npx sequelize-cli model:generate --name User --attributes username:string,email:string,password:string,role:string,phone:string,picture:string,authyId:string,displayName:string,isProfileComplete:boolean
+
 exports.default = _default;
+module.exports = exports.default;

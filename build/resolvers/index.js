@@ -18,3 +18,4 @@ const customScalarResolver = {
 };
 var _default = [customScalarResolver, _user.default, _workorder.default];
 exports.default = _default;
+module.exports = exports.default;

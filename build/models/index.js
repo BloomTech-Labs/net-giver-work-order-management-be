@@ -9,21 +9,19 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// const sequelize = new Sequelize(
-//   "postgres://bryant@localhost:5432/graphql_postgres"
-// );
+const path = require("path");
+
+const env = process.env.NODE_ENV || "development";
+
+const config = require(__dirname + "/../config/config.js")[env];
+
 let sequelize;
 exports.sequelize = sequelize;
 
-if (process.env.DATABASE_URL) {
-  exports.sequelize = sequelize = new _sequelize.default(process.env.DATABASE_URL, {
-    dialect: "postgres"
-  });
+if (config.use_env_variable) {
+  exports.sequelize = sequelize = new _sequelize.default(process.env[config.use_env_variable], config);
 } else {
-  exports.sequelize = sequelize = new _sequelize.default(process.env.TEST_DATABASE || process.env.DATABASE, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {
-    dialect: "postgres",
-    host: "/Users/bryant/Library/Application Support/Postgres/var-11"
-  });
+  exports.sequelize = sequelize = new _sequelize.default(config.database, config.username, config.password, config);
 }
 
 const models = {

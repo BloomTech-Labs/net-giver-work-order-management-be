@@ -30,3 +30,4 @@ const linkSchema = _apolloServerExpress.gql`
 `;
 var _default = [linkSchema, _user.default, _workorder.default];
 exports.default = _default;
+module.exports = exports.default;
