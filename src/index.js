@@ -94,23 +94,23 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
 /// seeding
-sequelize.sync({ force: isTest || isDev }).then(async () => {
-  if (isTest || isDev) {
-    createUsersWithWorkorders(new Date());
-  }
+// sequelize.sync({ force: isTest || isDev }).then(async () => {
+//   if (isTest || isDev) {
+//     createUsersWithWorkorders(new Date());
+//   }
 
-  httpServer.listen({ port }, () => {
-    console.log(
-      `Apollo Server on http://localhost:${port}/graphql and isdev ${isDev}`
-    );
-  });
-});
-
-// sequelize.sync({ force: false }).then(async () => {
 //   httpServer.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//     console.log(
+//       `Apollo Server on http://localhost:${port}/graphql and isdev ${isDev}`
+//     );
 //   });
 // });
+
+sequelize.sync({ force: false }).then(async () => {
+  httpServer.listen({ port }, () => {
+    console.log(`Apollo Server on http://localhost:${port}/graphql`);
+  });
+});
 
 const createUsersWithWorkorders = async date => {
   await models.User.create(
