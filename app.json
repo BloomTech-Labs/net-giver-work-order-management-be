@@ -1,7 +1,5 @@
 {
-  "addons": [
-    "heroku-postgresql"
-  ],
+  "addons": ["heroku-postgresql"],
   "buildpacks": [
     {
       "url": "heroku/nodejs"
@@ -15,7 +13,10 @@
     "SECRET": {
       "required": true
     },
-    "DATABASE_URL": "postgres://rdntcvkyjjdras:4ea4913480319624ab1a24352146896837995fee795c1be1c18044a9a0cccd5b@ec2-23-21-87-183.compute-1.amazonaws.com:5432/ddp0js5tj7misi"
+    "DB_USERNAME": "netgiver101",
+    "DB_PASSWORD": "9kGC4F2cO252Vw1e8edq",
+    "DB_NAME": "womdev",
+    "DB_HOSTNAME": "pg12freedev.cxvfgdzvg1yq.us-east-2.rds-preview.amazonaws.com"
   },
   "formation": {
     "web": {
@@ -23,7 +24,6 @@
     }
   },
   "name": "net-giver-wom-be",
-  "scripts": {
-  },
+  "scripts": {},
   "stack": "heroku-18"
 }

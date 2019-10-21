@@ -15,3 +15,4 @@ var _default = {
   user
 };
 exports.default = _default;
+module.exports = exports.default;

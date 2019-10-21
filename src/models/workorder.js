@@ -30,9 +30,6 @@ const workorder = (sequelize, DataTypes) => {
   Workorder.associate = models => {
     Workorder.belongsTo(models.User);
   };
-  // Workorder.associate = models => {
-  //   Workorder.hasMany(models.Qrcode, { onDelete: "CASCADE" });
-  // };
 
   return Workorder;
 };
