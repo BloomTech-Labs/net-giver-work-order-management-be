@@ -1,36 +1,17 @@
 "use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("workorders", {
+    return queryInterface.createTable("userphotos", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
+      filename: {
         type: Sequelize.STRING
       },
-      qrcode: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-          notEmpty: true,
-          len: [5]
-        }
-      },
-      status: {
-        type: Sequelize.STRING,
-        values: ["Complete", "In Progress", "Not Started"],
-        defaultValue: "Not Started"
-      },
-      priority: {
-        type: Sequelize.STRING,
-        values: ["Low", "Medium", "High", "Emergency"],
-        defaultValue: "Low"
-      },
-      detail: {
+      path: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -54,6 +35,8 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("workorders");
+    return queryInterface.dropTable("userphotos");
   }
 };
+
+// npx sequelize-cli model:generate --name Userphoto --attributes filename:string,path:string
