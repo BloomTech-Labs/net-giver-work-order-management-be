@@ -47,6 +47,10 @@ export default gql`
     token: String!
   }
 
+  type Userphoto {
+    path: String
+  }
+
   type User {
     id: ID!
     username: String!
@@ -57,5 +61,6 @@ export default gql`
     authyId: String
     displayName: String
     workorders: [Workorder!]
+    photo: Userphoto
   }
 `;

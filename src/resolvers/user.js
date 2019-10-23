@@ -7,7 +7,7 @@ import {
   isAuthenticated,
   isAuthyAuthenticated
 } from "./authorization";
-
+import photos from "./photos";
 import { Client } from "authy-client";
 import authy from "authy";
 
@@ -143,7 +143,6 @@ export default {
         return await user.update({ username });
       }
     ),
-
     deleteUser: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {
@@ -167,6 +166,14 @@ export default {
   User: {
     workorders: async (user, args, { models }) => {
       return await models.Workorder.findAll({
+        where: {
+          userId: user.id
+        }
+      });
+    },
+    photo: async (user, args, { models }) => {
+      return await models.Userphoto.findOne({
+        // attributes: [["path", "photourl"]],
         where: {
           userId: user.id
         }

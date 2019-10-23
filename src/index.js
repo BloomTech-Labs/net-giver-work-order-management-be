@@ -16,21 +16,6 @@ const app = express();
 
 app.use(cors());
 
-// app.use(morgan("dev"));
-
-// if (app.get("env") == "production") {
-//   app.use(
-//     morgan("common", {
-//       skip: function(req, res) {
-//         return res.statusCode < 400;
-//       },
-//       stream: __dirname + "morgan.log"
-//     })
-//   );
-// } else {
-//   app.use(morgan("dev"));
-// }
-
 const getMe = async req => {
   const token = req.headers["x-token"];
 
@@ -112,46 +97,46 @@ sequelize.sync({ force: false }).then(async () => {
   });
 });
 
-const createUsersWithWorkorders = async date => {
-  await models.User.create(
-    {
-      username: "bryant",
-      email: "bryantpatton@gmail.com",
-      password: "bryant",
-      role: "ADMIN",
-      phone: "4153163549",
-      authyId: "82620055",
-      workorders: [
-        {
-          title: "paint the dining area",
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-          qrcode: "000002"
-        }
-      ]
-    },
-    {
-      include: [models.Workorder]
-    }
-  );
+// const createUsersWithWorkorders = async date => {
+//   await models.User.create(
+//     {
+//       username: "bryant",
+//       email: "bryantpatton@gmail.com",
+//       password: "bryant",
+//       role: "ADMIN",
+//       phone: "4153163549",
+//       authyId: "82620055",
+//       workorders: [
+//         {
+//           title: "paint the dining area",
+//           createdAt: date.setSeconds(date.getSeconds() + 1),
+//           qrcode: "000002"
+//         }
+//       ]
+//     },
+//     {
+//       include: [models.Workorder]
+//     }
+//   );
 
-  await models.User.create(
-    {
-      username: "skylerd",
-      email: "skyler2440@gmail.com",
-      password: "password",
-      role: "ADMIN",
-      phone: "3523904132",
-      authyId: "190296236",
-      workorders: [
-        {
-          title: "fix broken sink in unit 101",
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-          qrcode: "000001"
-        }
-      ]
-    },
-    {
-      include: [models.Workorder]
-    }
-  );
-};
+//   await models.User.create(
+//     {
+//       username: "skylerd",
+//       email: "skyler2440@gmail.com",
+//       password: "password",
+//       role: "ADMIN",
+//       phone: "3523904132",
+//       authyId: "190296236",
+//       workorders: [
+//         {
+//           title: "fix broken sink in unit 101",
+//           createdAt: date.setSeconds(date.getSeconds() + 1),
+//           qrcode: "000001"
+//         }
+//       ]
+//     },
+//     {
+//       include: [models.Workorder]
+//     }
+//   );
+// };
