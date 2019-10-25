@@ -40,7 +40,7 @@ export default {
       };
     },
     workorder: async (parent, { qrcode }, { models }) => {
-      return await models.Workorder.findOne({ where: { qrcode } });
+      return await models.Workorder.findOne({ where: { qrcode: qrcode } });
     }
   },
 
