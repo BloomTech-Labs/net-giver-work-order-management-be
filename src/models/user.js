@@ -58,13 +58,13 @@ const user = (sequelize, DataTypes) => {
     },
     {}
   );
-
+  User.associate = models => {
+    User.hasOne(models.Userphoto, { onDelete: "CASCADE" });
+  };
   User.associate = models => {
     User.hasMany(models.Workorder, { onDelete: "CASCADE" });
   };
-  User.associate = models => {
-    User.hasOne(models.Userphoto);
-  };
+
   User.findByLogin = async login => {
     let user = await User.findOne({
       where: { username: login }

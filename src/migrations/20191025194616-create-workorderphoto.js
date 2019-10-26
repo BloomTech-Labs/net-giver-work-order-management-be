@@ -1,21 +1,22 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('TestUsers', {
+    return queryInterface.createTable("workorderphotos", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
+      filename: {
         type: Sequelize.STRING
       },
-      lastName: {
+      path: {
         type: Sequelize.STRING
       },
-      email: {
-        type: Sequelize.STRING
+      primaryPhoto: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
@@ -24,10 +25,20 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      workorderId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: {
+            tableName: "workorders"
+          },
+          key: "id"
+        },
+        allowNull: false
       }
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('TestUsers');
+    return queryInterface.dropTable("workorderphotos");
   }
 };

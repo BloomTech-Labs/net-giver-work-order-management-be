@@ -20,7 +20,8 @@ if (config.use_env_variable) {
 const models = {
   User: sequelize.import("./user"),
   Workorder: sequelize.import("./workorder"),
-  Userphoto: sequelize.import("./userphoto")
+  Userphoto: sequelize.import("./userphoto"),
+  Workorderphoto: sequelize.import("./workorderphoto")
 };
 
 Object.keys(models).forEach(key => {

@@ -29,7 +29,7 @@ export default gql`
   }
 
   type Workorder {
-    id: ID
+    id: ID!
     detail: String
     createdAt: Date!
     user: User!
@@ -37,6 +37,8 @@ export default gql`
     priority: String
     status: String
     title: String
+    userId: ID
+    workorderphoto: [Workorderphoto!]
   }
 
   extend type Subscription {

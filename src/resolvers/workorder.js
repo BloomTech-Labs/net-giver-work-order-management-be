@@ -40,7 +40,10 @@ export default {
       };
     },
     workorder: async (parent, { qrcode }, { models }) => {
-      return await models.Workorder.findOne({ where: { qrcode: qrcode } });
+      const workorder = await models.Workorder.findOne({
+        where: { qrcode: qrcode }
+      });
+      return workorder;
     }
   },
 
@@ -89,8 +92,17 @@ export default {
   },
 
   Workorder: {
-    user: async (workorder, args, { loaders }) => {
-      return await loaders.user.load(workorder.userId);
+    // user: async (workorder, args, { loaders }) => {
+    //   return await loaders.user.load(workorder.userId);
+    // }
+    user: async (workorder, args, { models }) => {
+      return await models.User.findOne({ where: { id: workorder.userId } });
+    },
+
+    workorderphoto: async (workorder, args, { models }) => {
+      return await models.Workorderphoto.findAll({
+        where: { workorderId: workorder.id }
+      });
     }
   },
 

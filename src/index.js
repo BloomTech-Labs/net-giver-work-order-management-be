@@ -34,9 +34,9 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    const message = error.message;
-    // .replace("SequelizeValidationError: ", "")
-    // .replace("Validation error: ", "");
+    const message = error.message
+      .replace("SequelizeValidationError: ", "")
+      .replace("Validation error: ", "");
 
     return {
       ...error,
@@ -47,9 +47,10 @@ const server = new ApolloServer({
     if (connection) {
       return {
         models,
-        loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
-        }
+        context
+        // loaders: {
+        //   user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+        // }
       };
     }
 
@@ -59,10 +60,10 @@ const server = new ApolloServer({
       return {
         models,
         me,
-        secret: process.env.SECRET,
-        loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
-        }
+        secret: process.env.SECRET
+        // loaders: {
+        //   user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+        // }
       };
     }
   }

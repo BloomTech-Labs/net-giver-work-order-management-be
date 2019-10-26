@@ -11,12 +11,10 @@ cloudinary.config({
   api_secret: process.env.API_SECRET
 });
 
-const photos = [];
-
 export default {
   Query: {
-    allPhotos() {
-      return photos;
+    allPhotos: async (parent, args, { models }) => {
+      return await models.Userphoto.findAll();
     },
     profilePhotos: async (parent, args, { models }) => {
       return await models.Userphoto.findAll();
