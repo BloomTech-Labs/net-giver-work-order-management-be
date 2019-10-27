@@ -15,7 +15,8 @@ export default gql`
     workorderId: ID!
     primaryPhoto: Boolean!
     photocount: Int!
-    userId: ID
+    userId: ID!
+    commentId: ID
   }
 
   extend type Mutation {
@@ -23,6 +24,7 @@ export default gql`
       photo: Upload!
       workorderId: ID!
       primaryPhoto: Boolean!
+      commentId: ID
     ): Workorderphoto!
     editWorkorderphoto(photo: Upload!): Workorderphoto!
   }

@@ -39,10 +39,22 @@ export default {
         }
       };
     },
-    workorder: async (parent, { qrcode }, { models }) => {
-      const workorder = await models.Workorder.findOne({
-        where: { qrcode: qrcode }
-      });
+    workorder: async (parent, { qrcode, id }, { models }) => {
+      let workorder;
+      try {
+        if (qrcode) {
+          workorder = await models.Workorder.findOne({
+            where: { qrcode: qrcode }
+          });
+        } else {
+          workorder = await models.Workorder.findOne({
+            where: { id: id }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        workorder = error;
+      }
       return workorder;
     }
   },
@@ -99,7 +111,7 @@ export default {
       return await models.User.findOne({ where: { id: workorder.userId } });
     },
 
-    workorderphoto: async (workorder, args, { models }) => {
+    workorderphotos: async (workorder, args, { models }) => {
       return await models.Workorderphoto.findAll({
         where: { workorderId: workorder.id }
       });

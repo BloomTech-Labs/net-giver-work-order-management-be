@@ -35,6 +35,20 @@ module.exports = {
           key: "id"
         },
         allowNull: false
+      },
+      photocount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: {
+            tableName: "users"
+          },
+          key: "id"
+        },
+        allowNull: false
       }
     });
   },

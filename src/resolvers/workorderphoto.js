@@ -34,7 +34,7 @@ export default {
             id: workorderId
           }
         });
-        const { qrcode, userId } = await workorder;
+        //const { qrcode, userId } = await workorder;
         const wocount = await models.Workorderphoto.findOne({
           attributes: [
             "workorderId",
@@ -49,52 +49,36 @@ export default {
         } else {
           photocount = parseInt(wocount.dataValues.photocount) + 1;
         }
-        // const { dataValues: { photocount } } = wocount;
-        // const photocounts = wocount.dataValues.photocount || 0;
-        // const dataValues = wocount.dataValues || 0;
-        // const photocounts = dataValues.photocount || 0;
-        console.log(photocount);
-        const title = `wo_${workorderId}_photo_${photocount}_user_${me.id}`;
+        const title = `wo_${workorderId}_photo_${photocount}_postedBy_user${me.id}`;
         let workorderphoto;
         try {
-          // const result = await new Promise((resolve, reject) => {
-          //   createReadStream({
-          //     encoding: "binary"
-          //   }).pipe(
-          //     cloudinary.uploader.upload_stream(
-          //       {
-          //         use_filename: true
-          //       },
-          //       (error, result) => {
-          //         if (error) {
-          //           reject(error);
-          //         }
-          //         resolve(result);
-          //       }
-          //     )
-          //   );
-          // });
-          // workorderphoto = await models.Workorderphoto.create({
-          //   filename: result.public_id,
-          //   path: result.secure_url,
-          //   workorderId: workorderId,
-          //   primaryPhoto: primaryPhoto
-          // });
+          const result = await new Promise((resolve, reject) => {
+            createReadStream().pipe(
+              cloudinary.uploader.upload_stream(
+                {
+                  use_filename: true
+                },
+                (error, result) => {
+                  if (error) {
+                    reject(error);
+                  }
+                  resolve(result);
+                }
+              )
+            );
+          });
           workorderphoto = await models.Workorderphoto.create({
             filename: title,
-            path: title,
+            path: result.secure_url,
             workorderId: workorderId,
             primaryPhoto: primaryPhoto,
             photocount: photocount,
             userId: me.id
           });
-          console.log(workorderphoto);
         } catch (err) {
           workorderphoto = err;
-          console.log(workorderphoto);
         }
         return workorderphoto;
-        [];
       }
     ),
     editWorkorderphoto: combineResolvers(
