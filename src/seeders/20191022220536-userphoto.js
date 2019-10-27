@@ -9,7 +9,7 @@ module.exports = {
           filename: "female4.jpeg",
           path:
             "https://res.cloudinary.com/dtpaltm0r/image/upload/v1571782681/k049dtd6kbkk2mnfj2m3.jpg",
-          userId: "18",
+          userId: "1",
           createdAt: new Date(),
           updatedAt: new Date()
         },
@@ -17,7 +17,7 @@ module.exports = {
           filename: "man4.jpeg",
           path:
             "https://res.cloudinary.com/dtpaltm0r/image/upload/v1571782692/kxu2n2j6y83axld4g65u.jpg",
-          userId: "17",
+          userId: "2",
           createdAt: new Date(),
           updatedAt: new Date()
         },
@@ -25,7 +25,7 @@ module.exports = {
           filename: "lady2.jpeg",
           path:
             "https://res.cloudinary.com/dtpaltm0r/image/upload/v1571782713/qyjlyarycootdaoqzriw.jpg",
-          userId: "19",
+          userId: "3",
           createdAt: new Date(),
           updatedAt: new Date()
         }

@@ -83,7 +83,7 @@ export default {
         displayName,
         authyId
       });
-      const token = createToken(user, secret, "30m");
+      const token = createToken(user, secret, "14d");
 
       return { token: token, user: user, authyId: authyId };
     },

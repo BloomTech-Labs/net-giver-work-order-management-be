@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export default gql`
   extend type Query {
     workorders(cursor: String, limit: Int): WorkorderConnection!
-    workorder(qrcode: String!): Workorder!
+    workorder(qrcode: String, id: ID): Workorder!
   }
 
   extend type Mutation {
@@ -29,7 +29,7 @@ export default gql`
   }
 
   type Workorder {
-    id: ID
+    id: ID!
     detail: String
     createdAt: Date!
     user: User!
@@ -37,6 +37,8 @@ export default gql`
     priority: String
     status: String
     title: String
+    userId: ID
+    workorderphotos: [Workorderphoto!]
   }
 
   extend type Subscription {
