@@ -4,27 +4,45 @@ import morgan from "morgan";
 import http from "http";
 import jwt from "jsonwebtoken";
 import DataLoader from "dataloader";
-import express from "express";
-import { ApolloServer, AuthenticationError } from "apollo-server-express";
-
+//import express from "express";
+//import { ApolloServer, AuthenticationError } from "apollo-server-express";
+import { ApolloServer, AuthenticationError } from "apollo-server";
 import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
 
-const app = express();
+// const app = express();
 
-app.use(cors());
+// app.use(cors());
 
 const getMe = async req => {
   const token = req.headers["x-token"];
 
   if (token) {
     try {
-      return await jwt.verify(token, process.env.SECRET);
+      var decoded = jwt.decode(token, { complete: true });
+      return jwt.verify(token, process.env.SECRET);
     } catch (e) {
       throw new AuthenticationError("Your session expired. Sign in again.");
     }
+  }
+  // if (token) {
+  //   return jwt.verify(token, process.env.SECRET, function(err, decoded) {
+  //     console.log(decoded); // bar
+  //   });
+  // }
+};
+
+const getUser = token => {
+  try {
+    if (token) {
+      return jwt.verify(token, process.env.SECRET);
+    }
+    return null;
+  } catch (err) {
+    // throw new AuthenticationError("Your session expired. Sign in again.");
+    return null;
   }
 };
 
@@ -34,45 +52,57 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    const message = error.message
-      .replace("SequelizeValidationError: ", "")
-      .replace("Validation error: ", "");
+    const message = error.message.replace("SequelizeValidationError: ", "");
+    if (message.startsWith("Database Error: ")) {
+      return new Error("Internal server error");
+    }
+    // .replace("Validation error: ", "");
 
     return {
       ...error,
       message
     };
   },
-  context: async ({ req, connection }) => {
-    if (connection) {
-      return {
-        models,
-        context
-        // loaders: {
-        //   user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
-        // }
-      };
-    }
-
-    if (req) {
-      const me = await getMe(req);
-
-      return {
-        models,
-        me,
-        secret: process.env.SECRET
-        // loaders: {
-        //   user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
-        // }
-      };
-    }
+  context: ({ req, res }) => {
+    const token = req.headers["x-token"];
+    //const token = tokenWithBearer.split(' ')[1]
+    const user = getUser(token);
+    return {
+      models,
+      user,
+      secret: process.env.SECRET
+    };
   }
+  // context: async ({ req, connection }) => {
+  //   if (connection) {
+  //     return {
+  //       models,
+  //       context,
+  //       loaders: {
+  //         user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+  //       }
+  //     };
+  //   }
+
+  //   if (req) {
+  //     const me = await getMe(req);
+
+  //     return {
+  //       models,
+  //       me,
+  //       secret: process.env.SECRET,
+  //       loaders: {
+  //         user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+  //       }
+  //     };
+  //   }
+  // }
 });
 
-server.applyMiddleware({ app, path: "/graphql" });
+// server.applyMiddleware({ app, path: "/graphql" });
 
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
+// const httpServer = http.createServer(app);
+// server.installSubscriptionHandlers(httpServer);
 
 const isTest = !!process.env.TEST_DATABASE;
 const isDev = !!process.env.DATABASE;
@@ -93,7 +123,7 @@ const port = process.env.PORT || 3000;
 // });
 
 sequelize.sync({ force: false }).then(async () => {
-  httpServer.listen({ port }, () => {
+  server.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });

@@ -10,6 +10,7 @@ const linkSchema = gql`
 
   type Query {
     _: Boolean
+    # readError: String
   }
 
   type Mutation {

@@ -7,8 +7,16 @@ import workorderphoto from "./workorderphoto";
 const customScalarResolver = {
   Date: GraphQLDateTime
 };
+const errresolver = {
+  Query: {
+    readError: (parent, args, context) => {
+      fs.readFileSync("/does/not/exist");
+    }
+  }
+};
 
 export default [
+  // errresolver,
   customScalarResolver,
   userResolvers,
   workorderResolvers,

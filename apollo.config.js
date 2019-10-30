@@ -1,7 +1,8 @@
 module.exports = {
   service: {
+    name: "wom",
     endpoint: {
-      url: "http://localhost:3000/graphql"
+      url: "https://netgiver-stage.herokuapp.com/graphql"
     }
   }
 };

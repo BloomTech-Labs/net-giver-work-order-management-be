@@ -1,10 +1,10 @@
-import { gql } from "apollo-server-express";
+import { gql } from "apollo-server";
 
 export default gql`
   extend type Query {
     users: [User!]
     user(id: ID!): User
-    me: User
+    currentUser: User!
   }
 
   extend type Mutation {
@@ -37,14 +37,15 @@ export default gql`
   }
 
   type SignIn {
-    token: String!
+    token: String
     user: User
     authyId: String!
     phone: String!
   }
 
   type Token {
-    token: String!
+    token: String
+    user: User
   }
 
   type Userphoto {
