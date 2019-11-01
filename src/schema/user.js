@@ -4,7 +4,7 @@ export default gql`
   extend type Query {
     users: [User!]
     user(id: ID!): User
-    currentUser: User!
+    currentUser: User
   }
 
   extend type Mutation {

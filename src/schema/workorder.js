@@ -1,9 +1,9 @@
-import { gql } from "apollo-server-express";
+import { gql } from "apollo-server";
 
 export default gql`
   extend type Query {
     workorders(cursor: String, limit: Int): WorkorderConnection!
-    workorder(qrcode: String, id: ID): Workorder!
+    workorder(qrcode: String, id: ID): Workorder
   }
 
   extend type Mutation {
@@ -23,9 +23,12 @@ export default gql`
     pageInfo: PageInfo!
   }
 
+  # pagesleft or total num records
+
   type PageInfo {
     hasNextPage: Boolean!
     endCursor: String!
+    # workordercount: Int!
   }
 
   type Workorder {
@@ -33,7 +36,7 @@ export default gql`
     detail: String
     createdAt: Date!
     user: User!
-    qrcode: String!
+    qrcode: String
     priority: String
     status: String
     title: String

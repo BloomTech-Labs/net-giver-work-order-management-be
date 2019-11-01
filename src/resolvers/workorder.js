@@ -27,13 +27,34 @@ export default {
         limit: limit + 1,
         ...cursorOptions
       });
+      // const result = await models.Workorder.findAll({
+      //   where: {
+      //     status: {
+      //       [Sequelize.Op.notLike]: "Complete"
+      //     }
+      //   }
+      //   // attributes: [
+      //   //   "workorderId",
+      //   //   [Sequelize.fn("COUNT", Sequelize.col("id")), "photocount"]
+      //   // ]
+      //   // group: "workorderId"
+      // });
+      // console.log(result);
+      // let wocount;
+      // if (!result) {
+      //   wocount = 0;
+      // } else {
+      //   wocount = parseInt(result.dataValues.count);
+      // }
 
       const hasNextPage = workorders.length > limit;
       const edges = hasNextPage ? workorders.slice(0, -1) : workorders;
+      // const workordercount = workorders.length;
 
       return {
         edges,
         pageInfo: {
+          workordercount: 50,
           hasNextPage,
           endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
         }

@@ -60,8 +60,8 @@ const verifyToken = async (authyId, cdde) => {
 
 export default {
   Query: {
-    users: async (parent, args, { models }) => {
-      return await models.User.findAll();
+    users: async (parent, args, { dataSources }) => {
+      return await dataSources.models.User.findAll();
     },
     user: async (parent, { id }, { models }) => {
       return await models.User.findByPk(id);
