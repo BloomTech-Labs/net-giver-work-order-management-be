@@ -83,10 +83,10 @@ export default {
   Mutation: {
     createWorkorder: combineResolvers(
       isAuthenticated,
-      async (parent, { qrcode }, { models, me }) => {
+      async (parent, { qrcode }, { models, user }) => {
         const workorder = await models.Workorder.create({
           qrcode,
-          userId: me.id
+          userId: user.id
         });
 
         pubsub.publish(EVENTS.WORKORDER.CREATED, {
@@ -102,7 +102,7 @@ export default {
       async (
         parent,
         { qrcode, detail, priority, status, title },
-        { models, me }
+        { models, user }
       ) => {
         const workorder = await models.Workorder.findOne({ where: { qrcode } });
         return await workorder.update({
