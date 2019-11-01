@@ -80,8 +80,8 @@ const server = new ApolloServer({
 //   }
 // });
 
-// const port = process.env.PORT || 4000;
-const port = 4000;
+const port = process.env.PORT || 4000;
+// const port = 4000;
 // sequelize.sync({ force: false }).then(async () => {
 //   server.listen({ port }, () => {
 //     console.log(`Apollo Server on http://localhost:${port}/graphql`);
