@@ -33,7 +33,7 @@ export default gql`
     detail: String
     createdAt: Date!
     user: User!
-    qrcode: String!
+    qrcode: String
     priority: String
     status: String
     title: String
