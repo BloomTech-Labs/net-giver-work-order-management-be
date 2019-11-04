@@ -11,11 +11,19 @@ import photos from "./photos";
 import { Client } from "authy-client";
 import authy from "authy";
 
-const createToken = async (user, secret, expiresIn) => {
+// const createToken = async (user, secret, expiresIn) => {
+//   const { id, email, username, role } = user;
+//   return await jwt.sign({ id, email, username, role }, secret, {
+//     expiresIn
+//   });
+// };
+
+const createToken = async (user, secret) => {
   const { id, email, username, role } = user;
-  return await jwt.sign({ id, email, username, role }, secret, {
-    expiresIn
+  const token = await jwt.sign({ id, email, username, role }, secret, {
+    expiresIn: "30d"
   });
+  return token;
 };
 
 let client;
@@ -52,18 +60,18 @@ const verifyToken = async (authyId, cdde) => {
 
 export default {
   Query: {
-    users: async (parent, args, { models }) => {
-      return await models.User.findAll();
+    users: async (parent, args, { dataSources }) => {
+      return await dataSources.models.User.findAll();
     },
     user: async (parent, { id }, { models }) => {
       return await models.User.findByPk(id);
     },
-    me: async (parent, args, { models, me }) => {
-      if (!me) {
+    currentUser: async (parent, args, { user, models }) => {
+      if (!user) {
         return null;
       }
 
-      return await models.User.findByPk(me.id);
+      return await models.User.findByPk(user.id);
     }
   },
 
@@ -83,9 +91,9 @@ export default {
         displayName,
         authyId
       });
-      const token = createToken(user, secret, "14d");
+      const token = await createToken(user, secret);
 
-      return { token: token, user: user, authyId: authyId };
+      return { token: token, user: user };
     },
 
     signIn: async (parent, { username, password }, { models, secret }) => {
@@ -101,7 +109,7 @@ export default {
         }
       }
 
-      const token = createToken(user, secret, "14d");
+      const token = createToken(user, secret);
       const { authyId } = user;
       const smsRequest = await client.requestSms({ authyId });
       const { cellphone } = smsRequest;
@@ -132,8 +140,8 @@ export default {
       if (code !== "123456") {
         throw new UserInputError("Wrong Auth Code. Try 123456");
       }
-      const token = createToken(user, secret, "30m");
-      return { token: token };
+      const token = createToken(user, secret);
+      return { token: token, user: user };
     },
 
     updateUser: combineResolvers(

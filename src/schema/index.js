@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+import { gql } from "apollo-server";
 
 import userSchema from "./user";
 import workorderSchema from "./workorder";
@@ -10,6 +10,7 @@ const linkSchema = gql`
 
   type Query {
     _: Boolean
+    # readError: String
   }
 
   type Mutation {
