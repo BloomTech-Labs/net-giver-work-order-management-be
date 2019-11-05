@@ -29,7 +29,6 @@ export default gql`
   type UserInfo {
     token: String!
     user: User
-    authyId: String!
   }
 
   type Login {

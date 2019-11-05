@@ -40,6 +40,7 @@ const registerAuthy = async ({ email, phone }) => {
     email: email,
     phone: phone
   });
+  console.log(register);
   const { user: { id: authyId } } = register;
   //const authyreq = await client.requestSms({ authyId });
   //const { cellphone } = authyreq;
@@ -60,8 +61,8 @@ const verifyToken = async (authyId, cdde) => {
 
 export default {
   Query: {
-    users: async (parent, args, { dataSources }) => {
-      return await dataSources.models.User.findAll();
+    users: async (parent, args, { models }) => {
+      return await models.User.findAll();
     },
     user: async (parent, { id }, { models }) => {
       return await models.User.findByPk(id);
@@ -82,6 +83,7 @@ export default {
       { models, secret }
     ) => {
       const authyId = await registerAuthy({ email, phone });
+      console.log(authyId);
       const user = await models.User.create({
         username,
         email,

@@ -24,7 +24,7 @@ export default {
   Mutation: {
     uploadPhoto: combineResolvers(
       isAuthenticated,
-      async (parent, { photo }, { models, me }) => {
+      async (parent, { photo }, { models, user }) => {
         const { filename, createReadStream } = await photo;
         try {
           const result = await new Promise((resolve, reject) => {
@@ -48,7 +48,7 @@ export default {
     ),
     uploadUserPhoto: combineResolvers(
       isAuthenticated,
-      async (parent, { photo }, { models, me }) => {
+      async (parent, { photo }, { models, user }) => {
         const { filename, createReadStream } = await photo;
         try {
           const result = await new Promise((resolve, reject) => {
@@ -64,7 +64,7 @@ export default {
           const userphoto = await models.Userphoto.create({
             filename: result.public_id,
             path: result.secure_url,
-            userId: me.id
+            userId: user.id
           });
           return userphoto;
         } catch (err) {
@@ -74,7 +74,7 @@ export default {
     ),
     editUserPhoto: combineResolvers(
       isAuthenticated,
-      async (parent, { photo }, { models, me }) => {
+      async (parent, { photo }, { models, user }) => {
         const { filename, createReadStream } = await photo;
         try {
           const result = await new Promise((resolve, reject) => {
@@ -89,13 +89,13 @@ export default {
           });
           const photo = await models.Userphoto.findOne({
             where: {
-              userId: me.id
+              userId: user.id
             }
           });
           const userphoto = await photo.update({
             filename: result.public_id,
             path: result.secure_url,
-            userId: me.id
+            userId: user.id
           });
           return userphoto;
         } catch (err) {
