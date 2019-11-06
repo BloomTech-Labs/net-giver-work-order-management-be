@@ -42,6 +42,7 @@ export default gql`
     title: String
     userId: ID
     workorderphotos: [Workorderphoto!]
+    workorderphoto: Workorderphoto
   }
 
   extend type Subscription {

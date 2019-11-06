@@ -27,7 +27,11 @@ export default {
   Mutation: {
     uploadWorkorderphoto: combineResolvers(
       isAuthenticated,
-      async (parent, { photo, workorderId, primaryPhoto }, { models, me }) => {
+      async (
+        parent,
+        { photo, workorderId, primaryPhoto },
+        { models, user }
+      ) => {
         const { filename, createReadStream } = await photo;
         const workorder = await models.Workorder.findOne({
           where: {
@@ -49,7 +53,7 @@ export default {
         } else {
           photocount = parseInt(wocount.dataValues.photocount) + 1;
         }
-        const title = `wo_${workorderId}_photo_${photocount}_postedBy_user${me.id}`;
+        const title = `wo_${workorderId}_photo_${photocount}_postedBy_user${user.id}`;
         let workorderphoto;
         try {
           const result = await new Promise((resolve, reject) => {
@@ -73,7 +77,7 @@ export default {
             workorderId: workorderId,
             primaryPhoto: primaryPhoto,
             photocount: photocount,
-            userId: me.id
+            userId: user.id
           });
         } catch (err) {
           workorderphoto = err;
@@ -83,7 +87,7 @@ export default {
     ),
     editWorkorderphoto: combineResolvers(
       isAuthenticated,
-      async (parent, { photo }, { models, me }) => {
+      async (parent, { photo }, { models, user }) => {
         const { filename, createReadStream } = await photo;
         try {
           const result = await new Promise((resolve, reject) => {
@@ -98,13 +102,13 @@ export default {
           });
           const workorderphoto = await models.Workorderphoto.findOne({
             where: {
-              userId: me.id
+              userId: user.id
             }
           });
           const userphoto = await workorderphoto.update({
             filename: result.public_id,
             path: result.secure_url,
-            userId: me.id
+            userId: user.id
           });
           return userphoto;
         } catch (err) {

@@ -3,7 +3,7 @@ import { combineResolvers } from "graphql-resolvers";
 
 import pubsub, { EVENTS } from "../subscription";
 import { isAuthenticated, isWorkorderOwner } from "./authorization";
-
+import { uploadWorkorderphoto } from "./workorderphoto";
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
 const fromCursorHash = string =>
@@ -105,13 +105,14 @@ export default {
         { models, user }
       ) => {
         const workorder = await models.Workorder.findOne({ where: { qrcode } });
-        return await workorder.update({
+        const editedworkorder = await workorder.update({
           qrcode,
           detail,
           priority,
           status,
           title
         });
+        return editedworkorder;
       }
     ),
 
@@ -134,6 +135,11 @@ export default {
 
     workorderphotos: async (workorder, args, { models }) => {
       return await models.Workorderphoto.findAll({
+        where: { workorderId: workorder.id }
+      });
+    },
+    workorderphoto: async (workorder, args, { models }) => {
+      return await models.Workorderphoto.findOne({
         where: { workorderId: workorder.id }
       });
     }

@@ -5,11 +5,11 @@ import { AuthenticationError, UserInputError } from "apollo-server";
 import {
   isAdmin,
   isAuthenticated,
+  isAuthyVerfied,
   isAuthyAuthenticated
 } from "./authorization";
 import photos from "./photos";
 import { Client } from "authy-client";
-import authy from "authy";
 
 // const createToken = async (user, secret, expiresIn) => {
 //   const { id, email, username, role } = user;
