@@ -13,7 +13,7 @@ export default gql`
     path: String!
     createdAt: Date!
     workorderId: ID!
-    primaryPhoto: Boolean!
+    primaryPhoto: Boolean
     photocount: Int!
     userId: ID!
     commentId: ID
@@ -23,7 +23,7 @@ export default gql`
     uploadWorkorderphoto(
       photo: Upload!
       workorderId: ID!
-      primaryPhoto: Boolean!
+      primaryPhoto: Boolean
       commentId: ID
     ): Workorderphoto!
     editWorkorderphoto(photo: Upload!): Workorderphoto!
