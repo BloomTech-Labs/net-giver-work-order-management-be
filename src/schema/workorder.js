@@ -9,7 +9,8 @@ export default gql`
   extend type Mutation {
     createWorkorder(qrcode: String!): Workorder!
     editWorkorder(
-      qrcode: String!
+      id: ID
+      qrcode: String
       detail: String
       priority: String
       status: String

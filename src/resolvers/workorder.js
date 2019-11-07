@@ -101,10 +101,11 @@ export default {
       isAuthenticated,
       async (
         parent,
-        { qrcode, detail, priority, status, title },
+        { id, qrcode, detail, priority, status, title },
         { models, user }
       ) => {
-        const workorder = await models.Workorder.findOne({ where: { qrcode } });
+        // const workorder = await models.Workorder.findOne({ where: { qrcode } });
+        const workorder = await models.Workorder.findByPk(id);
         const editedworkorder = await workorder.update({
           qrcode,
           detail,
