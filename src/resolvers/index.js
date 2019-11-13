@@ -1,12 +1,16 @@
-import { GraphQLDateTime } from "graphql-iso-date";
+import { GraphQLDate, GraphQLDateTime } from "graphql-iso-date";
 
 import userResolvers from "./user";
 import workorderResolvers from "./workorder";
 import photosResolvers from "./photos";
 import workorderphoto from "./workorderphoto";
+// import commentResolvers from "./comments";
+
 const customScalarResolver = {
-  Date: GraphQLDateTime
+  Date: GraphQLDate,
+  DateTime: GraphQLDateTime
 };
+
 const errresolver = {
   Query: {
     readError: (parent, args, context) => {

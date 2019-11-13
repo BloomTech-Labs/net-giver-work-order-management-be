@@ -4,7 +4,7 @@ import morgan from "morgan";
 import http from "http";
 import jwt from "jsonwebtoken";
 import DataLoader from "dataloader";
-import { ApolloServer, AuthenticationError } from "apollo-server";
+import { ApolloServer, AuthenticationError, ApolloError } from "apollo-server";
 import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
@@ -18,6 +18,7 @@ const getUser = token => {
     return null;
   } catch (err) {
     // throw new AuthenticationError("Your session expired. Sign in again.");
+    //return new ApolloError("Your token expired. Sign in again.");
     return null;
   }
 };
@@ -32,7 +33,7 @@ const server = new ApolloServer({
     if (message.startsWith("Database Error: ")) {
       return new Error("Internal server error");
     }
-    // .replace("Validation error: ", "");
+
     return {
       ...error,
       message
@@ -84,7 +85,7 @@ const port = process.env.PORT || 4000;
 // const port = 4000;
 // sequelize.sync({ force: false }).then(async () => {
 //   server.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
+//     console.log(`🚀 Server ready at ${port}`);
 //   });
 // });
 server.listen({ port }).then(({ url }) => {

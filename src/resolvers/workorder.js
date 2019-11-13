@@ -3,7 +3,12 @@ import { combineResolvers } from "graphql-resolvers";
 
 import pubsub, { EVENTS } from "../subscription";
 import { isAuthenticated, isWorkorderOwner } from "./authorization";
-import { uploadWorkorderphoto } from "./workorderphoto";
+import {
+  AuthenticationError,
+  UserInputError,
+  ApolloError
+} from "apollo-server";
+
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
 const fromCursorHash = string =>
@@ -27,25 +32,6 @@ export default {
         limit: limit + 1,
         ...cursorOptions
       });
-      // const result = await models.Workorder.findAll({
-      //   where: {
-      //     status: {
-      //       [Sequelize.Op.notLike]: "Complete"
-      //     }
-      //   }
-      //   // attributes: [
-      //   //   "workorderId",
-      //   //   [Sequelize.fn("COUNT", Sequelize.col("id")), "photocount"]
-      //   // ]
-      //   // group: "workorderId"
-      // });
-      // console.log(result);
-      // let wocount;
-      // if (!result) {
-      //   wocount = 0;
-      // } else {
-      //   wocount = parseInt(result.dataValues.count);
-      // }
 
       const hasNextPage = workorders.length > limit;
       const edges = hasNextPage ? workorders.slice(0, -1) : workorders;
@@ -63,13 +49,11 @@ export default {
     workorder: async (parent, { qrcode, id }, { models }) => {
       let workorder;
       try {
-        if (qrcode) {
-          workorder = await models.Workorder.findOne({
-            where: { qrcode: qrcode }
-          });
+        if (!qrcode) {
+          workorder = await models.Workorder.findByPk(id);
         } else {
           workorder = await models.Workorder.findOne({
-            where: { id: id }
+            where: { qrcode: qrcode }
           });
         }
       } catch (error) {
@@ -77,6 +61,11 @@ export default {
         workorder = error;
       }
       return workorder;
+    },
+    comments: async (parent, { workorderId }, { models }) => {
+      return await models.Comment.findAll({
+        where: { workorderId: workorderId }
+      });
     }
   },
 
@@ -123,6 +112,44 @@ export default {
       async (parent, { id }, { models }) => {
         return await models.Workorder.destroy({ where: { id } });
       }
+    ),
+    addComment: combineResolvers(
+      isAuthenticated,
+      async (parent, { comment }, { models, user }) => {
+        const { text, workorderId } = comment;
+        const woExists = await models.Workorder.findByPk(workorderId, {
+          select: ["id"]
+        });
+        if (!woExists) {
+          throw new ApolloError("Workorder ID doesnt exist .");
+        }
+        try {
+          const newComment = await models.Comment.create({
+            text,
+            workorderId: workorderId,
+            userId: user.id
+          });
+          return newComment;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+      }
+    ),
+    deleteComment: combineResolvers(
+      isAuthenticated,
+      async (parent, { id }, { models, user }) => {
+        const commentExists = await models.Comment.findByPk(id, {
+          select: ["id"]
+        });
+        if (!commentExists) {
+          throw new ApolloError("Comment doesnt exist.");
+        }
+        try {
+          return await models.Comment.destroy({ where: { id } });
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+      }
     )
   },
 
@@ -143,6 +170,16 @@ export default {
       return await models.Workorderphoto.findOne({
         where: { workorderId: workorder.id }
       });
+    },
+    comments: async (workorder, args, { models }) => {
+      return await models.Comment.findAll({
+        where: { workorderId: workorder.id }
+      });
+    }
+  },
+  Comment: {
+    user: async (comment, args, { models }) => {
+      return await models.User.findOne({ where: { id: comment.userId } });
     }
   },
 

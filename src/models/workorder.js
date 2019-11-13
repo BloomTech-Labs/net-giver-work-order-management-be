@@ -33,6 +33,9 @@ const workorder = (sequelize, DataTypes) => {
   Workorder.associate = models => {
     Workorder.hasMany(models.Workorderphoto, { onDelete: "CASCADE" });
   };
+  Workorder.associate = models => {
+    Workorder.hasMany(models.Comment, { onDelete: "CASCADE" });
+  };
 
   return Workorder;
 };

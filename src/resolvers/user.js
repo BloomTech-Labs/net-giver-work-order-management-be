@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import { combineResolvers } from "graphql-resolvers";
-import { AuthenticationError, UserInputError } from "apollo-server";
+import {
+  AuthenticationError,
+  UserInputError,
+  ApolloError
+} from "apollo-server";
 
 import {
   isAdmin,
@@ -10,13 +14,6 @@ import {
 } from "./authorization";
 import photos from "./photos";
 import { Client } from "authy-client";
-
-// const createToken = async (user, secret, expiresIn) => {
-//   const { id, email, username, role } = user;
-//   return await jwt.sign({ id, email, username, role }, secret, {
-//     expiresIn
-//   });
-// };
 
 const createToken = async (user, secret) => {
   const { id, email, username, role } = user;
@@ -33,7 +30,7 @@ if (process.env.ACCOUNT_SECURITY_API_KEY) {
   client = new Client({ key: "foo" });
 }
 
-const registerAuthy = async ({ email, phone }) => {
+const registerUser = async ({ email, phone }) => {
   //const { user: { id: authyId } } = await client.registerUser({
   const register = await client.registerUser({
     countryCode: "US",
@@ -73,35 +70,59 @@ export default {
       }
 
       return await models.User.findByPk(user.id);
+    },
+    getCode: async (parent, { email, phone }, { models, secret }) => {
+      const user = await models.User.findByLogin(email);
+      if (!user) {
+        throw new UserInputError("No user found with this login credentials.");
+      }
+      const { authyId } = user;
+      const smsRequest = await client.requestSms({ authyId });
+      const { cellphone } = smsRequest;
+
+      return cellphone;
     }
   },
 
   Mutation: {
-    signUp: async (
-      parent,
-      { username, email, password, phone, picture, displayName },
-      { models, secret }
-    ) => {
-      const authyId = await registerAuthy({ email, phone });
-      console.log(authyId);
+    registerAuthy: async (parent, { email, phone }, { models }) => {
+      const userAlreadyExists = await models.User.findOne({
+        where: { email },
+        select: ["id"]
+      });
+
+      if (userAlreadyExists) {
+        throw new ApolloError("User already exists.");
+      }
+      const authyId = await registerUser({ email, phone });
       const user = await models.User.create({
-        username,
         email,
-        password,
         phone,
-        picture,
-        displayName,
         authyId
       });
-      const token = await createToken(user, secret);
 
-      return { token: token, user: user };
+      return { user: user };
     },
-
+    verifyCode: async (parent, { authyId, code }, { models, secret }) => {
+      try {
+        const authyreq = await client.verifyToken({
+          authyId: authyId,
+          token: code
+        });
+        console.log(authyreq);
+        const { success } = authyreq;
+        const user = await models.User.findByLogin("bryant");
+        const token = createToken(user, secret);
+        return { user: user, token: token };
+      } catch (err) {
+        console.log("Verify Token Error: ", err);
+        throw new ApolloError(err.message);
+      }
+    },
     signIn: async (parent, { username, password }, { models, secret }) => {
       const user = await models.User.findByLogin(username);
       if (!user) {
-        throw new UserInputError("No user found with this login credentials.");
+        throw new ApolloError("No user found with this login credentials.");
       }
       if (password) {
         const isValid = await user.validatePassword(password);
@@ -110,7 +131,6 @@ export default {
           throw new AuthenticationError("Invalid password.");
         }
       }
-
       const token = createToken(user, secret);
       const { authyId } = user;
       const smsRequest = await client.requestSms({ authyId });

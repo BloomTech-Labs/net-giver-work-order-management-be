@@ -20,7 +20,8 @@ const models = {
   User: sequelize.import("./user"),
   Workorder: sequelize.import("./workorder"),
   Userphoto: sequelize.import("./userphoto"),
-  Workorderphoto: sequelize.import("./workorderphoto")
+  Workorderphoto: sequelize.import("./workorderphoto"),
+  Comment: sequelize.import("./comments")
 };
 
 Object.keys(models).forEach(key => {

@@ -1,12 +1,14 @@
 import { gql } from "apollo-server";
-
 import userSchema from "./user";
 import workorderSchema from "./workorder";
 import photosSchema from "./photos";
 import workorderphoto from "./workorderphoto";
+import comments from "./comments";
 
 const linkSchema = gql`
   scalar Date
+
+  scalar DateTime
 
   type Query {
     _: Boolean
@@ -27,5 +29,6 @@ export default [
   userSchema,
   workorderSchema,
   photosSchema,
-  workorderphoto
+  workorderphoto,
+  comments
 ];

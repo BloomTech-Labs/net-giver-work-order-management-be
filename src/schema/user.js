@@ -5,19 +5,22 @@ export default gql`
     users: [User!]
     user(id: ID!): User
     currentUser: User
+    getCode(phone: String!, email: String!): cellPhone
   }
 
   extend type Mutation {
+    registerAuthy(phone: String!, email: String!): signUpResponse!
     signUp(
-      username: String!
+      username: String
       email: String!
-      password: String!
+      password: String
       role: String
       phone: String!
       picture: String
       displayName: String
       authyId: String
-    ): UserInfo!
+    ): signUpResponse!
+    verifyCode(authyId: String!, code: String!, code: String!): UserInfo!
     signIn(username: String!, password: String): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
@@ -26,8 +29,16 @@ export default gql`
     authyVerifyDev(username: String!, code: String!): Token!
   }
 
+  type signUpResponse {
+    user: User
+  }
+
+  type cellPhone {
+    cellPhone: String
+  }
+
   type UserInfo {
-    token: String!
+    token: String
     user: User
   }
 
@@ -53,10 +64,10 @@ export default gql`
 
   type User {
     id: ID!
-    username: String!
-    email: String!
+    username: String
+    email: String
     role: String
-    phone: String!
+    phone: String
     picture: String
     authyId: String
     displayName: String
