@@ -7,8 +7,9 @@ export default gql`
   }
 
   input CommentInput {
-    text: String!
+    text: String
     workorderId: ID!
+    photo: Upload
   }
 
   type Comment {
@@ -17,6 +18,7 @@ export default gql`
     createdAt: DateTime!
     workorderId: ID!
     user: User
+    image: String
   }
 
   extend type Mutation {

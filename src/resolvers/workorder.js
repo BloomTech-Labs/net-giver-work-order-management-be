@@ -1,6 +1,5 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
-
 import pubsub, { EVENTS } from "../subscription";
 import { isAuthenticated, isWorkorderOwner } from "./authorization";
 import {
@@ -8,6 +7,13 @@ import {
   UserInputError,
   ApolloError
 } from "apollo-server";
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -116,18 +122,45 @@ export default {
     addComment: combineResolvers(
       isAuthenticated,
       async (parent, { comment }, { models, user }) => {
-        const { text, workorderId } = comment;
+        const { text, workorderId, photo } = comment;
+
         const woExists = await models.Workorder.findByPk(workorderId, {
           select: ["id"]
         });
         if (!woExists) {
           throw new ApolloError("Workorder ID doesnt exist .");
         }
+        let url;
+        if (photo) {
+          const { filename, createReadStream } = await photo;
+
+          try {
+            const result = await new Promise((resolve, reject) => {
+              createReadStream().pipe(
+                cloudinary.uploader.upload_stream(
+                  {
+                    use_filename: true
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    }
+                    resolve(result);
+                  }
+                )
+              );
+            });
+            url = result.secure_url;
+          } catch (err) {
+            throw new ApolloError(err.message);
+          }
+        }
         try {
           const newComment = await models.Comment.create({
             text,
             workorderId: workorderId,
-            userId: user.id
+            userId: user.id,
+            image: url
           });
           return newComment;
         } catch (err) {

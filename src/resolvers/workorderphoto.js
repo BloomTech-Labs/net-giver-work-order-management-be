@@ -38,7 +38,6 @@ export default {
             id: workorderId
           }
         });
-        //const { qrcode, userId } = await workorder;
         const wocount = await models.Workorderphoto.findOne({
           attributes: [
             "workorderId",
