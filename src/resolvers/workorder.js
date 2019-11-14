@@ -196,12 +196,21 @@ export default {
 
     workorderphotos: async (workorder, args, { models }) => {
       return await models.Workorderphoto.findAll({
-        where: { workorderId: workorder.id }
+        where: { workorderId: workorder.id },
+        order: [
+          // Will escape title and validate DESC against a list of valid direction parameters
+          ["photocount", "DESC"]
+        ],
+        limit: 3
       });
     },
     workorderphoto: async (workorder, args, { models }) => {
       return await models.Workorderphoto.findOne({
-        where: { workorderId: workorder.id }
+        where: { workorderId: workorder.id },
+        order: [
+          // Will escape title and validate DESC against a list of valid direction parameters
+          ["photocount", "DESC"]
+        ]
       });
     },
     comments: async (workorder, args, { models }) => {
