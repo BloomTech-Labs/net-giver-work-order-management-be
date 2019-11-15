@@ -1,8 +1,8 @@
-import { ForbiddenError } from "apollo-server";
+import { ForbiddenError, ApolloError } from "apollo-server";
 import { combineResolvers, skip } from "graphql-resolvers";
 
 export const isAuthenticated = (parent, args, { user }) =>
-  user ? skip : new ForbiddenError("Not authenticated as user.");
+  user ? skip : new ApolloError(err.message);
 
 export const isAuthyVerfied = (parent, args, { user }) =>
   user.verfied ? skip : new ForbiddenError("Not authenticated as user.");

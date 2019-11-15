@@ -190,6 +190,16 @@ export default {
         const { cellphone } = authyreq;
         return cellphone;
       }
+    ),
+    editUser: combineResolvers(
+      isAuthenticated,
+      async (parent, { token }, { models, me }) => {
+        const user = await models.User.findByPk(me.id);
+        const { authyId } = user;
+        const authyreq = client.verifyToken({ authyId: authyId, token: token });
+        const { cellphone } = authyreq;
+        return cellphone;
+      }
     )
   },
 
