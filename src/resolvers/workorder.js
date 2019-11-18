@@ -238,7 +238,10 @@ export default {
             userId: user.id,
             image: url
           });
-          return newComment;
+
+          pubsub.publish("commentAdded", {
+            commentAdded: { newComment }
+          });
         } catch (err) {
           throw new ApolloError(err.message);
         }
@@ -324,6 +327,9 @@ export default {
   Subscription: {
     workorderCreated: {
       subscribe: () => pubsub.asyncIterator(EVENTS.WORKORDER.CREATED)
+    },
+    commentAdded: {
+      subscribe: () => pubsub.asyncIterator("commentAdded")
     }
   }
 };
