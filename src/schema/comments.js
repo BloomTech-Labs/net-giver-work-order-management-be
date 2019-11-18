@@ -21,6 +21,10 @@ export default gql`
     image: String
   }
 
+  extend type Subscription {
+    commentAdded: Comment!
+  }
+
   extend type Mutation {
     addComment(comment: CommentInput): Comment
     deleteComment(id: ID!): Boolean!

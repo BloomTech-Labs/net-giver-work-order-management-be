@@ -5,15 +5,20 @@ import {
   UserInputError,
   ApolloError
 } from "apollo-server";
-
 import {
   isAdmin,
   isAuthenticated,
   isAuthyVerfied,
   isAuthyAuthenticated
 } from "./authorization";
-import photos from "./photos";
 import { Client } from "authy-client";
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
 
 const createToken = async (user, secret) => {
   const { id, email, username, role } = user;
@@ -189,6 +194,50 @@ export default {
         const authyreq = client.verifyToken({ authyId: authyId, token: token });
         const { cellphone } = authyreq;
         return cellphone;
+      }
+    ),
+    editUser: combineResolvers(
+      isAuthenticated,
+      async (parent, { userInfo }, { models, user }) => {
+        const { username, photo, id } = userInfo;
+        const userExists = await models.User.findByPk(id);
+        if (!userExists) {
+          throw new ApolloError("User ID doesnt exist .");
+        }
+        let url;
+        if (photo) {
+          const { filename, createReadStream } = await photo;
+          try {
+            const result = await new Promise((resolve, reject) => {
+              createReadStream().pipe(
+                cloudinary.uploader.upload_stream(
+                  {
+                    use_filename: true
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    }
+                    resolve(result);
+                  }
+                )
+              );
+            });
+            await models.Userphoto.create({
+              filename: result.public_id,
+              path: result.secure_url,
+              userId: userExists.id
+            });
+            url = result.secure_url;
+          } catch (err) {
+            throw new ApolloError(err.message);
+          }
+        }
+        try {
+          return await userExists.update({ username });
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
       }
     )
   },

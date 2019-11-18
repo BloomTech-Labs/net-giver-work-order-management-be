@@ -27,6 +27,17 @@ export default gql`
     verifyAuthy: UserInfo!
     signInDev(username: String!): Login!
     authyVerifyDev(username: String!, code: String!): Token!
+    editUser(userInfo: UserInput!): User
+  }
+
+  input UserInput {
+    id: ID!
+    photo: Upload
+    username: String
+    email: String
+    role: String
+    phone: String
+    displayName: String
   }
 
   type signUpResponse {
@@ -73,5 +84,6 @@ export default gql`
     displayName: String
     workorders: [Workorder!]
     photo: Userphoto
+    token: String
   }
 `;

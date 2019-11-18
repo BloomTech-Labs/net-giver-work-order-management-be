@@ -10,6 +10,8 @@ const linkSchema = gql`
 
   scalar DateTime
 
+  scalar Dateserial
+
   type Query {
     _: Boolean
     # readError: String

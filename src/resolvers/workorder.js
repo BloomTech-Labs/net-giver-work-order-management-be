@@ -46,7 +46,7 @@ export default {
       return {
         edges,
         pageInfo: {
-          workordercount: 50,
+          // workordercount: 50,
           hasNextPage,
           endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
         }
@@ -68,6 +68,7 @@ export default {
       }
       return workorder;
     },
+
     comments: async (parent, { workorderId }, { models }) => {
       return await models.Comment.findAll({
         where: { workorderId: workorderId }
@@ -79,16 +80,23 @@ export default {
     createWorkorder: combineResolvers(
       isAuthenticated,
       async (parent, { qrcode }, { models, user }) => {
-        const workorder = await models.Workorder.create({
-          qrcode,
-          userId: user.id
-        });
+        const woExists = await models.Workorder.findOne({ where: { qrcode } });
+        if (woExists) {
+          throw new ApolloError("Workorder exists .");
+        }
+        try {
+          const workorder = await models.Workorder.create({
+            qrcode,
+            userId: user.id
+          });
+          return workorder;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
 
-        pubsub.publish(EVENTS.WORKORDER.CREATED, {
-          workorderCreated: { workorder }
-        });
-
-        return workorder;
+        // pubsub.publish(EVENTS.WORKORDER.CREATED, {
+        //   workorderCreated: { workorder }
+        // });
       }
     ),
 
@@ -111,7 +119,75 @@ export default {
         return editedworkorder;
       }
     ),
-
+    workorderEdit: combineResolvers(
+      isAuthenticated,
+      async (parent, { workorder }, { models, user }) => {
+        const { qrcode, detail, priority, status, title, photo } = workorder;
+        const workorderId = workorder.id;
+        const woExists = await models.Workorder.findByPk(workorderId);
+        if (!woExists) {
+          throw new ApolloError("Workorder doesnt exist .");
+        }
+        let url;
+        if (photo) {
+          const { filename, createReadStream } = await photo;
+          const wocount = await models.Workorderphoto.findOne({
+            attributes: [
+              "workorderId",
+              [Sequelize.fn("COUNT", Sequelize.col("id")), "photocount"]
+            ],
+            where: { workorderId: workorderId },
+            group: "workorderId"
+          });
+          let photocount;
+          if (!wocount) {
+            photocount = 1;
+          } else {
+            photocount = parseInt(wocount.dataValues.photocount) + 1;
+          }
+          const title = `wo_${workorderId}_photo_${photocount}_postedBy_user${user.id}`;
+          try {
+            const result = await new Promise((resolve, reject) => {
+              createReadStream().pipe(
+                cloudinary.uploader.upload_stream(
+                  {
+                    use_filename: true
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    }
+                    resolve(result);
+                  }
+                )
+              );
+            });
+            await models.Workorderphoto.create({
+              filename: title,
+              path: result.secure_url,
+              workorderId: workorderId,
+              photocount: photocount,
+              userId: user.id
+            });
+            url = result.secure_url;
+          } catch (err) {
+            throw new ApolloError(err.message);
+          }
+        }
+        try {
+          const editedworkorder = await woExists.update({
+            qrcode,
+            detail,
+            priority,
+            status,
+            title
+          });
+          return editedworkorder;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+      }
+    ),
     deleteWorkorder: combineResolvers(
       isAuthenticated,
       isWorkorderOwner,
@@ -162,7 +238,10 @@ export default {
             userId: user.id,
             image: url
           });
-          return newComment;
+
+          pubsub.publish("commentAdded", {
+            commentAdded: { newComment }
+          });
         } catch (err) {
           throw new ApolloError(err.message);
         }
@@ -183,7 +262,27 @@ export default {
           throw new ApolloError(err.message);
         }
       }
-    )
+    ),
+    qrlookup: async (parent, { qrcode }, { models }) => {
+      const lookup = await models.Workorder.findOne({
+        where: { qrcode: qrcode }
+      });
+      let response = { found: null, id: null, qrcode: qrcode };
+      if (!lookup) {
+        try {
+          response = { found: false, id: null, qrcode: qrcode };
+          return response;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+      }
+      try {
+        response = { found: true, id: lookup.id, qrcode: qrcode };
+        return response;
+      } catch (err) {
+        throw new ApolloError(err.message);
+      }
+    }
   },
 
   Workorder: {
@@ -228,6 +327,9 @@ export default {
   Subscription: {
     workorderCreated: {
       subscribe: () => pubsub.asyncIterator(EVENTS.WORKORDER.CREATED)
+    },
+    commentAdded: {
+      subscribe: () => pubsub.asyncIterator("commentAdded")
     }
   }
 };

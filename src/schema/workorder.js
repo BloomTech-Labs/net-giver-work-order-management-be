@@ -17,6 +17,8 @@ export default gql`
       title: String
     ): Workorder!
     deleteWorkorder(id: ID!): Boolean!
+    workorderEdit(workorder: WorkorderInput): Workorder!
+    qrlookup(qrcode: String!): Qrlookup!
   }
 
   type WorkorderConnection {
@@ -30,6 +32,22 @@ export default gql`
     hasNextPage: Boolean!
     endCursor: String!
     # workordercount: Int!
+  }
+
+  type Qrlookup {
+    found: Boolean!
+    id: ID
+    qrcode: String
+  }
+
+  input WorkorderInput {
+    id: ID!
+    photo: Upload
+    detail: String
+    priority: String
+    status: String
+    title: String
+    qrcode: String
   }
 
   type Workorder {
