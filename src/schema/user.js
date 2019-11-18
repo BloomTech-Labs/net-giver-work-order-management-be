@@ -27,13 +27,11 @@ export default gql`
     verifyAuthy: UserInfo!
     signInDev(username: String!): Login!
     authyVerifyDev(username: String!, code: String!): Token!
-    editUser(user: UserInput!): User
+    editUser(userInfo: UserInput!): User
   }
 
   input UserInput {
-    filename: String!
-    path: String!
-    userId: ID!
+    id: ID!
     photo: Upload
     username: String
     email: String
