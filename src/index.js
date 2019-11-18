@@ -10,16 +10,17 @@ import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
 import WorkOrderAPI from "./datasources/WorkOrderAPI";
+
 const getUser = token => {
   try {
     if (token) {
       return jwt.verify(token, process.env.SECRET);
     }
-    return null;
+    // return null;
   } catch (err) {
     // throw new AuthenticationError("Your session expired. Sign in again.");
-    //return new ApolloError("Your token expired. Sign in again.");
-    return null;
+    return new ApolloError("Your token expired. Sign in again.");
+    // return null;
   }
 };
 
