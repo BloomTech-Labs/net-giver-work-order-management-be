@@ -108,15 +108,19 @@ export default {
 
       return { user: user };
     },
-    verifyCode: async (parent, { authyId, code }, { models, secret }) => {
+    verifyCode: async (
+      parent,
+      { authyId, code, email },
+      { models, secret }
+    ) => {
       try {
         const authyreq = await client.verifyToken({
           authyId: authyId,
           token: code
         });
-        console.log(authyreq);
+
         const { success } = authyreq;
-        const user = await models.User.findByLogin("bryant");
+        const user = await models.User.findByLogin(email);
         const token = createToken(user, secret);
         return { user: user, token: token };
       } catch (err) {
@@ -146,17 +150,22 @@ export default {
       // return { token: createToken(user, secret, "30m") };
     },
 
-    signInDev: async (parent, { username }, { models, secret }) => {
-      const user = await models.User.findByLogin(username);
-      if (!user) {
-        throw new UserInputError("No user found with this login credentials.");
-      }
+    checkUsername: async (parent, { username }, { models, secret }) => {
+      try {
+        const user = await models.User.findByLogin(username);
+        if (!user) {
+          throw new ApolloError("No user found with this login credentials.");
+        }
 
-      const { authyId } = user;
-      if (!authyId) {
-        throw new UserInputError("User has not registered with Authy.");
+        const { authyId } = user;
+
+        if (!authyId) {
+          throw new ApolloError("User has not registered with Authy.");
+        }
+        return { user: user };
+      } catch (err) {
+        throw new ApolloError(err.message);
       }
-      return { username: user.username };
     },
 
     authyVerifyDev: async (parent, { username, code }, { models, secret }) => {
@@ -199,8 +208,8 @@ export default {
     editUser: combineResolvers(
       isAuthenticated,
       async (parent, { userInfo }, { models, user }) => {
-        const { username, photo, id } = userInfo;
-        const userExists = await models.User.findByPk(id);
+        const { username, photo } = userInfo;
+        const userExists = await models.User.findByPk(user.id);
         if (!userExists) {
           throw new ApolloError("User ID doesnt exist .");
         }
@@ -226,7 +235,7 @@ export default {
             await models.Userphoto.create({
               filename: result.public_id,
               path: result.secure_url,
-              userId: userExists.id
+              userId: user.id
             });
             url = result.secure_url;
           } catch (err) {

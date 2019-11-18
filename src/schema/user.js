@@ -20,18 +20,22 @@ export default gql`
       displayName: String
       authyId: String
     ): signUpResponse!
-    verifyCode(authyId: String!, code: String!, code: String!): UserInfo!
+    verifyCode(
+      authyId: String!
+      code: String!
+      code: String!
+      email: String!
+    ): UserInfo!
     signIn(username: String!, password: String): SignIn!
     updateUser(username: String!): User!
     deleteUser(id: ID!): Boolean!
     verifyAuthy: UserInfo!
-    signInDev(username: String!): Login!
+    checkUsername(username: String!): UsernameResponse
     authyVerifyDev(username: String!, code: String!): Token!
     editUser(userInfo: UserInput!): User
   }
 
   input UserInput {
-    id: ID!
     photo: Upload
     username: String
     email: String
@@ -46,6 +50,10 @@ export default gql`
 
   type cellPhone {
     cellPhone: String
+  }
+
+  type UsernameResponse {
+    user: User
   }
 
   type UserInfo {
