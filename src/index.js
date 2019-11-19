@@ -4,12 +4,20 @@ import morgan from "morgan";
 import http from "http";
 import jwt from "jsonwebtoken";
 import DataLoader from "dataloader";
-import { ApolloServer, AuthenticationError, ApolloError } from "apollo-server";
+// import { ApolloServer, AuthenticationError, ApolloError } from "apollo-server";
+import { ApolloError } from "apollo-server";
+import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
 import WorkOrderAPI from "./datasources/WorkOrderAPI";
+import express from "express";
+const app = express();
+
+app.use(cors());
+
+app.use(morgan("dev"));
 
 const getUser = token => {
   try {
@@ -40,47 +48,33 @@ const server = new ApolloServer({
       message
     };
   },
-  context: ({ req, res }) => {
-    const token = req.headers["x-token"];
-    //const token = tokenWithBearer.split(' ')[1]
-    const user = getUser(token);
-    return {
-      models,
-      user,
-      secret: process.env.SECRET
-    };
+  context: ({ req, connection }) => {
+    if (connection) {
+      return {
+        models,
+        loaders: {
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+        }
+      };
+    }
+
+    if (req) {
+      const token = req.headers["x-token"];
+      //const token = tokenWithBearer.split(' ')[1]
+      const user = getUser(token);
+      return {
+        models,
+        user,
+        secret: process.env.SECRET
+      };
+    }
   }
 });
 
-// const server = new ApolloServer({
-//   introspection: true,
-//   playground: true,
-//   typeDefs: schema,
-//   dataSources: () => ({
-//     workOrderAPI: new WorkOrderAPI()
-//   }),
-//   resolvers,
-//   formatError: error => {
-//     const message = error.message.replace("SequelizeValidationError: ", "");
-//     if (message.startsWith("Database Error: ")) {
-//       return new Error("Internal server error");
-//     }
-//     // .replace("Validation error: ", "");
-//     return {
-//       ...error,
-//       message
-//     };
-//   },
-//   context: ({ req, res }) => {
-//     const token = req.headers["x-token"];
-//     //const token = tokenWithBearer.split(' ')[1]
-//     const user = getUser(token);
-//     return {
-//       user,
-//       secret: process.env.SECRET
-//     };
-//   }
-// });
+server.applyMiddleware({ app });
+
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
 const port = process.env.PORT || 4000;
 // const port = 4000;
@@ -89,6 +83,10 @@ const port = process.env.PORT || 4000;
 //     console.log(`🚀 Server ready at ${port}`);
 //   });
 // });
-server.listen({ port }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+// server.listen({ port }).then(({ url }) => {
+//   console.log(`🚀 Server ready at ${url}`);
+// });
+
+httpServer.listen({ port }, () => {
+  console.log(`Apollo Server on http://localhost:${port}/graphql`);
 });

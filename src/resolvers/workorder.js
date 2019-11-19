@@ -89,14 +89,13 @@ export default {
             qrcode,
             userId: user.id
           });
+          pubsub.publish(EVENTS.WORKORDER.CREATED, {
+            workorderCreated: { workorder }
+          });
           return workorder;
         } catch (err) {
           throw new ApolloError(err.message);
         }
-
-        // pubsub.publish(EVENTS.WORKORDER.CREATED, {
-        //   workorderCreated: { workorder }
-        // });
       }
     ),
 
@@ -239,9 +238,9 @@ export default {
             image: url
           });
 
-          pubsub.publish("commentAdded", {
-            commentAdded: { newComment }
-          });
+          // pubsub.publish(EVENTS.COMMENT.CREATED, {
+          //   commentAdded: { newComment }
+          // });
         } catch (err) {
           throw new ApolloError(err.message);
         }
@@ -328,8 +327,8 @@ export default {
     workorderCreated: {
       subscribe: () => pubsub.asyncIterator(EVENTS.WORKORDER.CREATED)
     },
-    commentAdded: {
-      subscribe: () => pubsub.asyncIterator("commentAdded")
+    commentCreated: {
+      subscribe: () => pubsub.asyncIterator(EVENTS.COMMENT.CREATED)
     }
   }
 };

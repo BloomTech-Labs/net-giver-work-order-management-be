@@ -21,8 +21,12 @@ export default gql`
     image: String
   }
 
+  type CommentCreated {
+    comment: Comment!
+  }
+
   extend type Subscription {
-    commentAdded: Comment!
+    commentCreated(id: ID!): CommentCreated!
   }
 
   extend type Mutation {
