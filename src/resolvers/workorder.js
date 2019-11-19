@@ -92,6 +92,9 @@ export default {
           pubsub.publish(EVENTS.WORKORDER.CREATED, {
             workorderCreated: { workorder }
           });
+          console.log("response create: ", {
+            workorderCreated: { workorder }
+          });
           return workorder;
         } catch (err) {
           throw new ApolloError(err.message);
@@ -174,14 +177,20 @@ export default {
           }
         }
         try {
-          const editedworkorder = await woExists.update({
+          const workorder = await woExists.update({
             qrcode,
             detail,
             priority,
             status,
             title
           });
-          return editedworkorder;
+          pubsub.publish(EVENTS.WORKORDER.CREATED, {
+            workorderCreated: { workorder }
+          });
+          console.log("response: edit", {
+            workorderCreated: { workorder }
+          });
+          return workorder;
         } catch (err) {
           throw new ApolloError(err.message);
         }
