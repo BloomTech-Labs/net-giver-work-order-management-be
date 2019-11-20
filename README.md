@@ -6,17 +6,25 @@
 
 # API Documentation
 
-#### 1️⃣ Backend delpoyed at [🚫name service here](🚫add URL here) <br>
+#### 1️⃣ Backend delpoyed at [Heroku](https://netgiver-stage.herokuapp.com/graphql) <br>
 
 ## 1️⃣ Getting started
 
 To get the server running locally:
 
-🚫 adjust these scripts to match your project
 
 - Clone this repo
 - **yarn install** to install all required dependencies
-- **yarn server** to start the local server
+- **create .env file** for postgres DB local access, for example:
+```
+DB_USERNAME=me
+DB_PASSWORD=null
+DB_NAME=wom
+DB_HOSTNAME=localhost:5432
+SECRET=mysupersecretsecret
+PORT=3000
+```
+- **yarn run startdev** to start the local server
 - **yarn test** to start server using testing environment
 
 ### Backend framework goes here
@@ -30,26 +38,7 @@ To get the server running locally:
 
 ## 2️⃣ Endpoints
 
-🚫This is a placeholder, replace the endpoints, access controll, and descriptioin to match your project
-
-#### Organization Routes
-
-| Method | Endpoint                | Access Control | Description                                  |
-| ------ | ----------------------- | -------------- | -------------------------------------------- |
-| GET    | `/organizations/:orgId` | all users      | Returns the information for an organization. |
-| PUT    | `/organizatoins/:orgId` | owners         | Modify an existing organization.             |
-| DELETE | `/organizations/:orgId` | owners         | Delete an organization.                      |
-
-#### User Routes
-
-| Method | Endpoint                | Access Control      | Description                                        |
-| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/users/current`        | all users           | Returns info for the logged in user.               |
-| GET    | `/users/org/:userId`    | owners, supervisors | Returns all users for an organization.             |
-| GET    | `/users/:userId`        | owners, supervisors | Returns info for a single user.                    |
-| POST   | `/users/register/owner` | none                | Creates a new user as owner of a new organization. |
-| PUT    | `/users/:userId`        | owners, supervisors |                                                    |
-| DELETE | `/users/:userId`        | owners, supervisors |                                                    |
+See schema/docs at https://netgiver-stage.herokuapp.com/graphql
 
 # Data Model
 
