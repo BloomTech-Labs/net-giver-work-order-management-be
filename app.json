@@ -1,29 +1,25 @@
 {
-  "addons": ["heroku-postgresql"],
-  "buildpacks": [
-    {
-      "url": "heroku/nodejs"
+    "addons": ["heroku-postgresql"],
+    "buildpacks": [
+        {
+            "url": "heroku/nodejs"
+        },
+        {
+            "url": "https://github.com/carloluis/heroku-buildpack-vim"
+        }
+    ],
+    "description": "",
+    "env": {
+        "SECRET": {
+            "required": true
+        }
     },
-    {
-      "url": "https://github.com/carloluis/heroku-buildpack-vim"
-    }
-  ],
-  "description": "",
-  "env": {
-    "SECRET": {
-      "required": true
+    "formation": {
+        "web": {
+            "quantity": 1
+        }
     },
-    "DB_USERNAME": "netgiver101",
-    "DB_PASSWORD": "9kGC4F2cO252Vw1e8edq",
-    "DB_NAME": "womdev",
-    "DB_HOSTNAME": "pg12freedev.cxvfgdzvg1yq.us-east-2.rds-preview.amazonaws.com"
-  },
-  "formation": {
-    "web": {
-      "quantity": 1
-    }
-  },
-  "name": "net-giver-wom-be",
-  "scripts": {},
-  "stack": "heroku-18"
+    "name": "net-giver-wom-be",
+    "scripts": {},
+    "stack": "heroku-18"
 }
