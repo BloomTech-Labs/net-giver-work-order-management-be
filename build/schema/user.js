@@ -68,3 +68,4 @@ var _default = _apolloServerExpress.gql`
 `;
 
 exports.default = _default;
+module.exports = exports.default;

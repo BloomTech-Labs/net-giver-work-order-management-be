@@ -167,7 +167,7 @@ var _default = {
         }
       }
 
-      const token = createToken(user, secret, "30m");
+      const token = createToken(user, secret, "14d");
       const {
         authyId
       } = user;
@@ -285,3 +285,4 @@ var _default = {
   }
 };
 exports.default = _default;
+module.exports = exports.default;

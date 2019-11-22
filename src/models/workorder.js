@@ -13,10 +13,14 @@ const workorder = (sequelize, DataTypes) => {
       }
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      values: ["Open", "Hold", "Working", "Done"],
+      defaultValue: "Open"
     },
     priority: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      values: ["Low", "Medium", "High", "Urgent"],
+      defaultValue: "Low"
     },
     detail: {
       type: DataTypes.STRING
@@ -26,9 +30,12 @@ const workorder = (sequelize, DataTypes) => {
   Workorder.associate = models => {
     Workorder.belongsTo(models.User);
   };
-  // Workorder.associate = models => {
-  //   Workorder.hasMany(models.Qrcode, { onDelete: "CASCADE" });
-  // };
+  Workorder.associate = models => {
+    Workorder.hasMany(models.Workorderphoto, { onDelete: "CASCADE" });
+  };
+  Workorder.associate = models => {
+    Workorder.hasMany(models.Comment, { onDelete: "CASCADE" });
+  };
 
   return Workorder;
 };

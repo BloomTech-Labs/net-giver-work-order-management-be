@@ -63,13 +63,11 @@ const server = new _apolloServerExpress.ApolloServer({
   typeDefs: _schema.default,
   resolvers: _resolvers.default,
   formatError: error => {
-    // remove the internal sequelize error workorder
-    // leave only the important validation error
-    const workorder = error.workorder; // .replace("SequelizeValidationError: ", "")
+    const message = error.message; // .replace("SequelizeValidationError: ", "")
     // .replace("Validation error: ", "");
 
     return { ...error,
-      workorder
+      message
     };
   },
   context: async ({
@@ -107,27 +105,29 @@ const httpServer = _http.default.createServer(app);
 
 server.installSubscriptionHandlers(httpServer);
 const isTest = !!process.env.TEST_DATABASE;
+const isDev = !!process.env.DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
-const port = process.env.PORT || 3000; ///initial seeding
+const port = process.env.PORT || 3000; /// seeding
+// sequelize.sync({ force: isTest || isDev }).then(async () => {
+//   if (isTest || isDev) {
+//     createUsersWithWorkorders(new Date());
+//   }
+//   httpServer.listen({ port }, () => {
+//     console.log(
+//       `Apollo Server on http://localhost:${port}/graphql and isdev ${isDev}`
+//     );
+//   });
+// });
 
 _models.sequelize.sync({
-  force: isTest || isProduction
+  force: false
 }).then(async () => {
-  if (isTest || isProduction) {
-    createUsersWithWorkorders(new Date());
-  }
-
   httpServer.listen({
     port
   }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
-}); // sequelize.sync({ force: false }).then(async () => {
-//   httpServer.listen({ port }, () => {
-//     console.log(`Apollo Server on http://localhost:${port}/graphql`);
-//   });
-// });
-
+});
 
 const createUsersWithWorkorders = async date => {
   await _models.default.User.create({
@@ -138,7 +138,7 @@ const createUsersWithWorkorders = async date => {
     phone: "4153163549",
     authyId: "82620055",
     workorders: [{
-      order: "paint the dining area",
+      title: "paint the dining area",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       qrcode: "000002"
     }]
@@ -149,10 +149,11 @@ const createUsersWithWorkorders = async date => {
     username: "skylerd",
     email: "skyler2440@gmail.com",
     password: "password",
+    role: "ADMIN",
     phone: "3523904132",
     authyId: "190296236",
     workorders: [{
-      order: "fix broken sink in unit 101",
+      title: "fix broken sink in unit 101",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       qrcode: "000001"
     }]

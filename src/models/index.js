@@ -1,26 +1,27 @@
+"use strict";
 import Sequelize from "sequelize";
 
-// const sequelize = new Sequelize(
-//   "postgres://bryant@localhost:5432/graphql_postgres"
-// );
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.js")[env];
 
 let sequelize;
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(
-    process.env.TEST_DATABASE || process.env.DATABASE_URL,
-    {
-      dialect: "postgres"
-    }
-  );
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  sequelize = new Sequelize(process.env.DATABASE, {
-    dialect: "postgres"
-  });
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
 }
 
 const models = {
   User: sequelize.import("./user"),
-  Workorder: sequelize.import("./workorder")
+  Workorder: sequelize.import("./workorder"),
+  Userphoto: sequelize.import("./userphoto"),
+  Workorderphoto: sequelize.import("./workorderphoto"),
+  Comment: sequelize.import("./comments")
 };
 
 Object.keys(models).forEach(key => {

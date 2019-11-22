@@ -11,9 +11,7 @@ var _graphqlResolvers = require("graphql-resolvers");
 
 const isAuthenticated = (parent, args, {
   me
-}) => //remove authentication
-// me ? skip : new ForbiddenError("Not authenticated as user.");
-me ? _graphqlResolvers.skip : _graphqlResolvers.skip;
+}) => me ? _graphqlResolvers.skip : new _apolloServer.ForbiddenError("Not authenticated as user.");
 
 exports.isAuthenticated = isAuthenticated;
 const isAdmin = (0, _graphqlResolvers.combineResolvers)(isAuthenticated, (parent, args, {
@@ -34,9 +32,7 @@ const isWorkorderOwner = async (parent, {
   });
 
   if (workorder.userId !== me.id) {
-    // remove ownership requirement
-    // throw new ForbiddenError("Not authenticated as owner.");
-    return _graphqlResolvers.skip;
+    throw new _apolloServer.ForbiddenError("Not authenticated as owner.");
   }
 
   return _graphqlResolvers.skip;
