@@ -33,7 +33,7 @@
         "apollo-datasource-rest": "^0.6.6",
         "apollo-server": "^2.2.3",
         "apollo-server-express": "^2.2.3",
-        "apollo-server-lambda": "^2.9.5",
+        "apollo-server-lambda": "^2.14.2",
         "authy": "^1.4.0",
         "authy-client": "^1.1.4",
         "bcrypt": "^3.0.2",
