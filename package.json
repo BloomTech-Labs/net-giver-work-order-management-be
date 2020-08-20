@@ -36,7 +36,7 @@
         "apollo-server-lambda": "^2.9.5",
         "authy": "^1.4.0",
         "authy-client": "^1.1.4",
-        "bcrypt": "^3.0.2",
+        "bcrypt": "^5.0.0",
         "cloudinary": "^1.16.0",
         "cors": "^2.8.5",
         "dataloader": "^1.4.0",
